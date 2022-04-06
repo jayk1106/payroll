@@ -1,0 +1,15 @@
+.icon{
+    width: 35px;
+    height: 30px;
+    margin-right: 10px;
+    background-color: #fff;
+    color: #4FD1C5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+}
+.active{
+    background: #4FD1C5;
+    color: #fff;
+}

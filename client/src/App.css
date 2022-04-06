@@ -1,0 +1,50 @@
+.main-layout{
+  background-color: #F7FAFC;
+}
+.main-layout .main-layout__aside{
+  background-color: #F7FAFC;
+  height: 100vh;
+}
+.main-layout .logo{
+  margin-left: 30px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+.main-layout .main-layout__content{  
+  background-color: #F7FAFC;
+  padding-top: 30px;
+}
+.main-layout .main-layout__footer{
+  text-align: center;
+  background-color: #F7FAFC;
+}
+.main-layout .main-layout__menu{
+  background-color: #F7FAFC;
+  border: none;
+  box-shadow: none;
+}
+.main-layout .main-layout__menu-item{
+  height: 100px;
+  border: none;
+}
+/* .main-layout .main-layout__menu-item:hover{
+  background-color: #FFFFFF ;
+  border-radius: 10px;
+} */
+.main-layout .menu__icons{
+  font-size: 30px;
+}
+.main-layout .sub-heading{
+  font-size: 17px;
+  font-weight: 600;
+  margin: 30px 0;
+}
+
+
+/*Ant design classes*/
+.ant-menu-item-selected{
+  border-radius: 10px;
+  /* background-color: #FFFFFF !important; */
+}
