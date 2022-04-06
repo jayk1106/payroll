@@ -1,0 +1,17 @@
+.table {
+  width: 90%;
+  margin-top: 20px;
+}
+
+.btn__add {
+  margin-top: 20px;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: row;
+}
+
+.avatar__details {
+  margin-left: 10px;
+}
