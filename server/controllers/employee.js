@@ -18,12 +18,33 @@ module.exports.getEmployee = async (req,res,next) => {
     }
 }
 
-module.exports.getDashboard = async (req,res,next) => {
-    try {
-        if(req.isAdmin){
-            
-        }
+module.exports.getEmployeeProfile = async (req,res,next) => {
 
+    const empId = req.params.empId;
+    try {
+        const result =  await Employee.getEmployeeProfile(empId);
+        console.log(result.rows);
+        res.status(200).json({
+            message : "Employee's details",
+            details : result.rows[0],
+            isAdmin : req.isAdmin ? true : false
+        })
+    } catch (err) {
+        if(err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+
+module.exports.putMakAdmin = async (req, res, next) => {
+    
+    const empId = req.params.empId;
+
+    try {
+        const result = await Employee.makeAdmin(empId);
+        res.status(200).json({
+            message : "Successfully make an Admin"
+        });
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;
         next(err);

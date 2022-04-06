@@ -34,4 +34,11 @@ module.exports = class Salary{
     static deleteById(id){
         return pool.query(`DELETE FROM salary WHERE id = $1`, [id]);
     }
+
+    static spendAmount(){
+        return pool.query(`SELECT SUM(amount) from salary WHERE status = 'Approved'`);
+    }
+    static pendingAmount() {
+        return pool.query(`SELECT SUM(amount) from salary WHERE status= 'Pending'`);
+    }
 }

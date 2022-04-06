@@ -27,4 +27,8 @@ module.exports = class Leave{
     static deleteById(id){
         return pool.query(`DELETE FROM leaves WHERE id = $1`, [id]);
     } 
+
+    static numberOfPending(){
+        return pool.query(`SELECT COUNT(status) from leaves WHERE status = 'Pending'`);
+    }
 }

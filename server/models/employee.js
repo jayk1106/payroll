@@ -42,4 +42,19 @@ module.exports = class Employee{
         return pool.query(`DELETE FROM employees WHERE id = $1` , [id]);
     }
 
-}
+    static numberOfEmployees(){
+        return pool.query(`SELECT COUNT(id) from employees`);
+    }
+
+    static latestEmployees(num){
+        return pool.query(``);
+    }
+
+    static getEmployeeProfile(id){
+        return pool.query(`SELECT * from employees JOIN branches ON employees.branch = branches.id JOIN departments ON employees.department = departments.id WHERE employees.id = $1`,[id]);
+    }
+
+    static makeAdmin(id){
+        return pool.query(`UPDATE employees SET permissions = 'c40441eb-06ae-4b67-8cd4-fc15ced1a94e' WHERE id = $1`, [id]);
+    }
+}   

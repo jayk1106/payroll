@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 
 const userRoutes = require('./routes/user');
 const orgRoutes = require('./routes/organization');
@@ -16,16 +17,19 @@ const leaveRoutes = require('./routes/leave');
 const salaryRoutes = require('./routes/salary');
 const taxRoutes = require('./routes/tax');
 const activityRoutes = require('./routes/activity');
+const dashboardRoutes = require('./routes/dashboard');
 
 const app = express();
 
 // For allowing request
-app.use((req,res,next) => {
-    res.setHeader('Access-Control-Allow-Origin' , '*'); // also give some specific domains like 'xyz.com,abc.com'
-    res.setHeader('Access-Control-Allow-Methods' , 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers' , 'Content-Type , Authorization');
-    next();
-})
+app.use(cors());
+// app.use((req,res,next) => {
+//     console.log(req.method);
+//     res.setHeader('Access-Control-Allow-Origin' , '*'); // also give some specific domains like 'xyz.com,abc.com'
+//     res.setHeader('Access-Control-Allow-Methods' , 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
+//     res.setHeader('Access-Control-Allow-Headers' , 'Content-Type , Authorization');
+//     next();
+// })
 
 
 
@@ -48,6 +52,7 @@ app.use('/api/v1/leave' , leaveRoutes);
 app.use('/api/v1/salary' , salaryRoutes);
 app.use('/api/v1/tax' , taxRoutes);
 app.use('/api/v1/activity' , activityRoutes);
+app.use('/api/v1/dashboard', dashboardRoutes);
 
 
 // error handling

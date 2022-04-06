@@ -23,4 +23,8 @@ module.exports = class Credit{
     static deleteById(id){
         return pool.query(`DELETE FROM credits WHERE id = $1`, [id]);
     }
+
+    static numberOfPending(){
+        return pool.query(`SELECT COUNT(id) from credits WHERE status = 'Pending'`);
+    }
 }
