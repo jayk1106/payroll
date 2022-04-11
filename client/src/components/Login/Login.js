@@ -28,7 +28,7 @@ const Login = () => {
     });
     console.log(data);
     if (data && data.user.token) {
-      login(data.user.token);
+      login(data.user.token, data.user.organizationId);
     }
     if (data && data.error) {
       errorContent = (

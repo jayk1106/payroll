@@ -1,7 +1,11 @@
-import React from "react";
-import { Space, Table, Button, Modal } from "antd";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { Space, Table, Button, Modal, Spin, Tag } from "antd";
 
+import useHttp from "../../hooks/useHttp";
+import AddEmployee from "../Employees/AddEmployee";
 import "./UserProfile.css";
+
 const dataSource = [
   {
     key: "1",
@@ -35,7 +39,32 @@ const columns = [
   },
 ];
 
-export default function UserProfile() {
+export default function UserProfile(props) {
+  const URL = props.api_url;
+
+  const { sendRequest, isLoadding, error } = useHttp();
+
+  const [employeeData, setEmployeeData] = useState({});
+  const [employeeIsAdmin, setEmployeeIsAdmin] = useState(false);
+
+  const { employeeId } = useParams();
+  const getEmployeeData = async () => {
+    const res = await sendRequest({
+      url: `${URL}/employee/${employeeId}`,
+      options: {
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      },
+    });
+
+    if (res && res.details) {
+      console.log(res.details);
+      setEmployeeData(res.details);
+      setEmployeeIsAdmin(res.isAdmin);
+    }
+  };
+
   const confirm = () => {
     Modal.confirm({
       title: "Make As Admin",
@@ -48,64 +77,131 @@ export default function UserProfile() {
       },
     });
   };
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+  useEffect(() => {
+    getEmployeeData();
+  }, [isModalVisible]);
 
   return (
     <>
       <div className="heading">Employee Profile</div>
-      <Button className="btn__add" type="primary" onClick={confirm}>
-        Make As Admin
-      </Button>
+      {isLoadding && (
+        <div className="example">
+          <Spin />
+        </div>
+      )}
 
-      <div className="main">
-        <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-          <h3 className="heading__details">Personal Information</h3>
-          <div className="main__div">
-            <div className="div__left">
-              <p>Name: Jay Kaneriya</p>
-              <p>Email: kaneriyajay3@gmail.com</p>
-            </div>
-            <div className="div__right">
-              <p>Gender: Male</p>
-              <p>Age: 24</p>
-            </div>
-          </div>
+      {!isLoadding && (
+        <>
+          <Space direction="horizontal" size="large">
+            {!employeeIsAdmin && (
+              <Button type="primary" onClick={confirm}>
+                Make As Admin
+              </Button>
+            )}
+            {employeeIsAdmin && (
+              <Tag color="success" style={{ margin: "auto" }}>
+                Admin
+              </Tag>
+            )}
 
-          <div className="divider"></div>
+            <Button type="primary" onClick={showModal}>
+              Edit
+            </Button>
 
-          <h3 className="heading__details">Organizational Information</h3>
-          <div className="main__div">
-            <div className="div__left">
-              <p>Department: I.T.</p>
-              <p>Branch: New York</p>
-            </div>
-            <div className="div__right">
-              <p>Date Of Join: 11 June 2019</p>
-              <p>Salary: 12 LPA</p>
-            </div>
-          </div>
-
-          <div className="divider"></div>
-
-          <div className="main__div">
-            <div className="div__left">
-              <h3 className="heading__details">Pending Requests</h3>
-              <Table
-                className="table"
-                columns={columns}
-                dataSource={dataSource}
+            <Modal
+              title="Edit Details"
+              visible={isModalVisible}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              style={{ top: 20 }}
+            >
+              <AddEmployee
+                data={employeeData}
+                closeModal={handleCancel}
+                url={URL}
               />
-            </div>
-            <div className="div__right">
-              <h3 className="heading__details">Pending Salary</h3>
-              <Table
-                className="table"
-                columns={columns}
-                dataSource={dataSource}
-              />
-            </div>
+            </Modal>
+          </Space>
+
+          <div className="main">
+            <Space
+              direction="vertical"
+              size="middle"
+              style={{ display: "flex" }}
+            >
+              <h3 className="heading__details">Personal Information</h3>
+              <div className="main__div">
+                <div className="div__left">
+                  <p>
+                    Name: {employeeData.e_fname + " " + employeeData.e_lname}
+                  </p>
+                  <p>Email: {employeeData.e_email}</p>
+                </div>
+                <div className="div__right">
+                  <p>Gender: {employeeData.e_gender}</p>
+                  <p>Age: {employeeData.e_age}</p>
+                </div>
+              </div>
+
+              <div className="divider"></div>
+
+              <h3 className="heading__details">Organizational Information</h3>
+              <div className="main__div">
+                <div className="div__left">
+                  <p>Department: {employeeData.dp_name}</p>
+                  <p>Branch: {employeeData.br_name}</p>
+                </div>
+                <div className="div__right">
+                  <p>
+                    Date Of Join:{" "}
+                    {new Date(employeeData.join_date).getDate() +
+                      "/" +
+                      new Date(employeeData.join_date).getMonth() +
+                      "/" +
+                      new Date(employeeData.join_date).getFullYear()}
+                  </p>
+                  <p>Salary: {employeeData.e_salary_per_year}</p>
+                </div>
+              </div>
+
+              <div className="divider"></div>
+
+              <div className="main__div">
+                <div className="div__left">
+                  <h3 className="heading__details">Pending Requests</h3>
+                  <Table
+                    className="table"
+                    columns={columns}
+                    dataSource={dataSource}
+                  />
+                </div>
+                <div className="div__right">
+                  <h3 className="heading__details">Pending Salary</h3>
+                  <Table
+                    className="table"
+                    columns={columns}
+                    dataSource={dataSource}
+                  />
+                </div>
+              </div>
+            </Space>
           </div>
-        </Space>
-      </div>
+        </>
+      )}
     </>
   );
 }

@@ -6,3 +6,12 @@
 .table {
   width: 90%;
 }
+
+.avatar {
+  display: flex;
+  flex-direction: row;
+}
+
+.avatar__details {
+  margin-left: 10px;
+}

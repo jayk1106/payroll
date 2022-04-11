@@ -20,6 +20,8 @@ import MainLayout from "./components/UI/MainLayout/MainLayout";
 
 function App() {
   const { isLoggedIn } = useContext(authContext);
+  const URL = process.env.REACT_APP_API_URL;
+
   return (
     <>
       <Routes>
@@ -51,7 +53,20 @@ function App() {
           element={
             isLoggedIn ? (
               <MainLayout>
-                <Employees />
+                <Employees api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="employees/:employeeId"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <UserProfile api_url={URL} />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />
@@ -72,18 +87,6 @@ function App() {
           }
         />
 
-        <Route
-          path="employee"
-          element={
-            isLoggedIn ? (
-              <MainLayout>
-                <UserProfile />
-              </MainLayout>
-            ) : (
-              <Navigate to="/login" replace />
-            )
-          }
-        />
         <Route
           path="requests"
           element={

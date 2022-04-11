@@ -1,13 +1,10 @@
 import React, { useState } from "react";
-import { Avatar, Table, Tag, Tabs, Modal, Button } from "antd";
+import { Avatar, Table, Tag, Button, Modal } from "antd";
 
 import RequestDetails from "./RequestDetails";
-import LeaveTable from "./LeaveTable";
 import style from "./Requests.module.css";
 
-const { TabPane } = Tabs;
-
-export default function Requests() {
+export default function LeaveTable() {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const showModal = () => {
@@ -23,50 +20,23 @@ export default function Requests() {
     setIsModalVisible(false);
   };
 
-  const dataSource_credit = [
+  const dataSource_leave = [
     {
       key: "1",
       name: "Mike",
-      title: "Credit for Phone",
-      amount: 10000,
+      title: "Leave for Sickness",
       status: "Pending",
     },
     {
       key: "2",
       name: "Jay",
-      title: "Credit for Fantasy",
-      amount: 10000,
+      title: "Leave for Date",
       status: "Rejected",
     },
     {
       key: "3",
       name: "Jay",
-      title: "Credit for Laptop",
-      amount: 10000,
-      status: "Approved",
-    },
-  ];
-
-  const dataSource_loan = [
-    {
-      key: "1",
-      name: "Mike",
-      title: "Loan for Phone",
-      amount: 20000,
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "Jay",
-      title: "Loan for Fantasy",
-      amount: 20000,
-      status: "Rejected",
-    },
-    {
-      key: "3",
-      name: "Jay",
-      title: "Loan for Laptop",
-      amount: 20000,
+      title: "Leave for Marriage",
       status: "Approved",
     },
   ];
@@ -80,9 +50,9 @@ export default function Requests() {
       render: (value) => {
         return (
           <div className={style.avatar}>
-            <Avatar>J</Avatar>
+            <Avatar> {value[0].toUpperCase()}</Avatar>
             <div className={style.avatar__details}>
-              Jay <br />
+              {value} <br />
               kaneriyajay3@gmail.com
             </div>
           </div>
@@ -93,11 +63,6 @@ export default function Requests() {
       title: "Title",
       dataIndex: "title",
       key: "title",
-    },
-    {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
     },
     {
       title: "Status",
@@ -128,30 +93,13 @@ export default function Requests() {
       },
     },
   ];
-
   return (
     <>
-      <div className={style.heading}>Requests</div>
-      <Tabs defaultActiveKey="1">
-        <TabPane tab="Credit" key="1" onClick>
-          <Table
-            className={style.table}
-            dataSource={dataSource_credit}
-            columns={columns}
-          />
-        </TabPane>
-        <TabPane tab="Loan" key="2">
-          <Table
-            className={style.table}
-            dataSource={dataSource_loan}
-            columns={columns}
-          />
-        </TabPane>
-        <TabPane tab="Leave" key="3">
-          <LeaveTable />
-        </TabPane>
-      </Tabs>
-
+      <Table
+        className={style.table}
+        dataSource={dataSource_leave}
+        columns={columns}
+      />
       <Modal
         title="Details"
         visible={isModalVisible}
