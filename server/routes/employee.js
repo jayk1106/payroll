@@ -8,9 +8,9 @@ const isAdmin = require('../middlewares/isAdmin');
 
 const router = express.Router();
 
-router.get('/' , authUser, getPermissions, isAdmin, empControllers.getEmployee);
-
 router.get('/:empId' , authUser, getPermissions, isAdmin, empControllers.getEmployeeProfile );
+
+router.get('/all/:orgId' , authUser, getPermissions, isAdmin, empControllers.getEmployee);
 
 router.post('/' , authUser, getPermissions, isAdmin, empControllers.postEmployee);
 

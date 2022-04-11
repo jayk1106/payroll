@@ -31,6 +31,19 @@ module.exports = class Salary{
         return pool.query(`SELECT * FROM salary WHERE employee = $1`,[employee]);
     }
 
+    static fetchAllForOrganization(orgId , month , year){
+        if(month && year){
+            const startDate = `${year}-${month}-01`;
+            let endDate = `${year}-${month+1}-01`;
+            if(month == 12){
+                endDate = `${year+1}-01-01`;
+            }
+            console.log(startDate,endDate);
+            return pool.query(`SELECT * FROM salary JOIN employees ON salary.employee = employees.id WHERE employees.organization = $1 AND salary.end_date BETWEEN $2 AND $3`,[orgId,startDate,endDate]);
+        }
+        return pool.query(`SELECT * FROM salary JOIN employees ON salary.employee = employees.id WHERE employees.organization = $1`,[orgId]);
+    }
+
     static deleteById(id){
         return pool.query(`DELETE FROM salary WHERE id = $1`, [id]);
     }

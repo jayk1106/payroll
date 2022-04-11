@@ -99,11 +99,16 @@ module.exports.loginUser = async (req,res,next) => {
             email : user.user_email
         } , SECRET_KEY );
         
+        // 3. check user createed any organization or not
+        const result2 = await User.getOrganization(user.id);
+        const organizationId = result2.rows[0] ? result2.rows[0].id : null;
+
         return res.status(200).json({
             message : "User logged in!",
             user : {
                 id : user.id,
                 token : token,
+                organizationId : organizationId,
                 user_email : user.user_email,
                 user_fname : user.user_fname,
                 user_lname : user.user_lname

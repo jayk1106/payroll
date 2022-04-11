@@ -17,7 +17,7 @@ const leaveRoutes = require('./routes/leave');
 const salaryRoutes = require('./routes/salary');
 const taxRoutes = require('./routes/tax');
 const activityRoutes = require('./routes/activity');
-const dashboardRoutes = require('./routes/dashboard');
+const generalRoutes = require('./routes/general');
 
 const app = express();
 
@@ -52,7 +52,7 @@ app.use('/api/v1/leave' , leaveRoutes);
 app.use('/api/v1/salary' , salaryRoutes);
 app.use('/api/v1/tax' , taxRoutes);
 app.use('/api/v1/activity' , activityRoutes);
-app.use('/api/v1/dashboard', dashboardRoutes);
+app.use('/api/v1/general', generalRoutes);
 
 
 // error handling

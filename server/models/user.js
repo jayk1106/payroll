@@ -33,4 +33,8 @@ module.exports = class User{
     static deleteById(id){
         return pool.query(`DELETE FROM users WHERE id = $1`,[id]);
     }
+
+    static getOrganization(id){
+        return pool.query(`SELECT * FROM organization WHERE org_user = $1`,[id]);
+    }
 }

@@ -4,6 +4,8 @@ const salaryControllers = require('../controllers/salary');
 
 const router = express.Router();
 
+router.get('/all/:orgId' , salaryControllers.getAllSalaryForOrganization);
+
 router.get('/:empId' , salaryControllers.getSalary);
 
 router.post('/' , salaryControllers.postSalary);

@@ -17,6 +17,39 @@ module.exports.getSalary = async (req,res,next) => {
     }
 }
 
+module.exports.getAllSalaryForOrganization = async (req,res,next) => {
+    const orgId = req.params.orgId;
+    const month = req.query.month;
+    const year = req.query.year;
+
+    try {
+
+        if(month && year){
+            if(year.length !== 4 || (+month < 1 && +month > 12 )){
+                return res.status(400).send({
+                    error : "Send valid query parameters"
+                });
+            }
+            const result = await Salary.fetchAllForOrganization(orgId , +month , +year);
+            // console.log(result.rows);
+            return res.status(200).json({
+            message : "All salaries for this organization",
+            salaries : result.rows
+        })
+        }
+
+        const result = await Salary.fetchAllForOrganization(orgId);
+        // console.log(result.rows);
+        res.status(200).json({
+            message : "All salaries for this organization",
+            salaries : result.rows
+        })
+    } catch (err) {
+        if(err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 module.exports.postSalary = async (req,res,next) => {
     const amount = req.body.amount;
     const start_date = req.body.start_date;

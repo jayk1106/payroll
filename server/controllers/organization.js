@@ -1,5 +1,7 @@
 const Organization = require('../models/organization');
 const Branch = require('../models/branch');
+const Department = require('../models/department');
+const User = require('../models/user');
 
 module.exports.getOrganization = async (req,res,next) => {    
     try {
@@ -27,12 +29,13 @@ module.exports.postOrganization = async (req,res,next) => {
 
     
     try {
+
         const organization = new Organization({
             org_name, org_city, org_country, org_address, org_user
         })
 
         const result = await organization.save();
-
+        // create branch for organization
         const branch = new Branch({
             organization : result.rows[0].id,
             br_name : "Main Branch",
@@ -40,9 +43,18 @@ module.exports.postOrganization = async (req,res,next) => {
             br_country : org_country,
             br_address : org_address,
         })
-
         const result2 = await branch.save();
-        console.log(result2.rows);
+        // console.log(result2.rows);
+
+        // create one department for organization
+        const department =  new Department({
+            dp_name : "General",
+            dp_description : `Default department for ${result.rows[0].org_name} organization`,
+            organization : result.rows[0].id
+        })
+        const result3 = await department.save();
+        // console.log(result3.rows);
+
         res.status(201).json({
             message : "Organization created successfully!",
             organization : result.rows[0]

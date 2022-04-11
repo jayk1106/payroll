@@ -4,7 +4,13 @@ const creditControllers = require('../controllers/credit');
 
 const router = express.Router();
 
+router.get('/all/:orgId' , creditControllers.getAllOrganizationsCredits);
+
 router.get('/:empId' , creditControllers.getCredits);
+
+router.put('/settle/:creditId', creditControllers.putSettleCredit);
+ 
+// router.put('/reject/:creditId', creditControllers);
 
 router.post('/' , creditControllers.postCredit);
 

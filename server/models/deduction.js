@@ -6,10 +6,11 @@ module.exports = class Deduction{
         this.description = dr.description;
         this.type = dr.type;
         this.employee = dr.employee;
+        this.amount = dr.amount;
     }
  
     save(){
-        return pool.query(`INSERT INTO deduction (title, description, type, employee) VALUES ($1, $2, $3, $4) RETURNING *`,[this.title, this.description, this.type, this.employee]);
+        return pool.query(`INSERT INTO deduction (title, description, type, employee, amount) VALUES ($1, $2, $3, $4, $5) RETURNING *`,[this.title, this.description, this.type, this.employee, this.amount]);
     }
 
     static fetchAll(employee){
