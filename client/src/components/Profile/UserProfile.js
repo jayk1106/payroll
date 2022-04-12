@@ -59,7 +59,6 @@ export default function UserProfile(props) {
     });
 
     if (res && res.details) {
-      console.log(res.details);
       setEmployeeData(res.details);
       setEmployeeIsAdmin(res.isAdmin);
     }

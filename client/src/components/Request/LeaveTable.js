@@ -9,7 +9,6 @@ export default function LeaveTable() {
 
   const showModal = () => {
     setIsModalVisible(true);
-    console.log("selected");
   };
 
   const handleOk = () => {

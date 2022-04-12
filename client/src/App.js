@@ -92,7 +92,7 @@ function App() {
           element={
             isLoggedIn ? (
               <MainLayout>
-                <Requests />
+                <Requests api_url={URL} />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />
