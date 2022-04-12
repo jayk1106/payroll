@@ -1,0 +1,26 @@
+.table {
+  width: 90%;
+  margin-top: 20px;
+}
+
+.btn__add {
+  margin-top: 20px;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: row;
+}
+
+.avatar__details {
+  margin-left: 10px;
+}
+
+.example {
+  margin: 20px 0;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}

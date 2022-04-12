@@ -1,0 +1,57 @@
+.heading {
+  font-size: 20px;
+  font-weight: 600;
+}
+.btn__add {
+  margin-top: 20px;
+}
+
+.main {
+  margin-top: 30px;
+  width: 100%;
+  height: 90%;
+}
+
+.heading__details {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.main__div {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.div__left {
+  width: 50%;
+  margin: 0;
+}
+
+.div__right {
+  width: 50%;
+  margin: 0;
+}
+
+.divider {
+  background-color: rgba(1, 1, 1, 0.2);
+  width: 95%;
+  height: 1px;
+  margin: auto;
+}
+
+.table {
+  width: 90%;
+}
+
+.example {
+  margin: 20px 0;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
