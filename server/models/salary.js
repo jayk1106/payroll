@@ -48,10 +48,10 @@ module.exports = class Salary{
         return pool.query(`DELETE FROM salary WHERE id = $1`, [id]);
     }
 
-    static spendAmount(){
-        return pool.query(`SELECT SUM(amount) from salary WHERE status = 'Approved'`);
+    static spendAmount(orgId){
+        return pool.query(`SELECT SUM(salary.amount) from salary JOIN employees ON salary.employee = employees.id WHERE status = 'Approved' AND employees.organization = $1`,[orgId]);
     }
-    static pendingAmount() {
-        return pool.query(`SELECT SUM(amount) from salary WHERE status= 'Pending'`);
+    static pendingAmount(orgId) {
+        return pool.query(`SELECT SUM(salary.amount) from salary JOIN employees ON salary.employee = employees.id WHERE status = 'Pending' AND employees.organization = $1`,[orgId]);
     }
 }

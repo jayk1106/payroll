@@ -28,7 +28,10 @@ module.exports = class Employee{
         return pool.query(`SELECT employees.id ,e_fname, e_lname, e_email, br_name, dp_name FROM employees JOIN branches ON employees.branch = branches.id JOIN departments ON employees.department = departments.id WHERE employees.organization = $1 ORDER BY created_at DESC`,[orgId]);
     }
 
-    static find(columnName , value){
+    static find(columnName , value, organization){
+        if(organization){
+            return pool.query(`SELECT * FROM employees WHERE ${columnName} = $1 AND organization = $2` , [value,organization]);
+        }
         return pool.query(`SELECT * FROM employees WHERE ${columnName} = $1` , [value]);
     }
 
@@ -46,12 +49,12 @@ module.exports = class Employee{
         return pool.query(`DELETE FROM employees WHERE id = $1` , [id]);
     }
 
-    static numberOfEmployees(){
-        return pool.query(`SELECT COUNT(id) from employees`);
+    static numberOfEmployees(orgId){
+        return pool.query(`SELECT COUNT(id) from employees WHERE organization = $1`,[orgId]);
     }
 
-    static latestEmployees(num){
-        return pool.query(``);
+    static latestEmployees(num, orgId){
+        return pool.query(`SELECT * from employees WHERE organization = $1 ORDER BY created_at DESC LIMIT $2`,[orgId, num]);
     }
 
     static getEmployeeProfile(id){
@@ -61,4 +64,4 @@ module.exports = class Employee{
     static makeAdmin(id){
         return pool.query(`UPDATE employees SET permissions = 'c40441eb-06ae-4b67-8cd4-fc15ced1a94e' WHERE id = $1`, [id]);
     }
-}   
+}

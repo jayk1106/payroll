@@ -8,6 +8,8 @@ const isAdmin = require('../middlewares/isAdmin');
 
 const router = express.Router();
 
+router.get('/' , authUser, getPermissions, empControllers.getCurrentEmployessDetails );
+
 router.get('/:empId' , authUser, getPermissions, isAdmin, empControllers.getEmployeeProfile );
 
 router.get('/all/:orgId' , authUser, getPermissions, isAdmin, empControllers.getEmployee);

@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const Employee = require('../models/employee');
+const User = require('../models/user');
 const {SECRET_KEY} = require('../util/config');
 
 module.exports.getEmployee = async (req,res,next) => {
@@ -12,6 +13,32 @@ module.exports.getEmployee = async (req,res,next) => {
         res.status(200).json({
             message : "All emplyoees",
             employees : result.rows
+        })
+    } catch (err) {
+        if(err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+module.exports.getCurrentEmployessDetails = async (req, res, next) =>{
+    const empId = req.employeeId;
+    const userId = req.userId;
+    try {
+        let result;
+        if(empId){
+            result =  await Employee.getEmployeeProfile(empId);
+            // console.log(result.rows);
+            
+        }
+        if(userId){
+            result = await User.find('id',userId);
+            // console.log(result.rows);
+        }
+        res.status(200).json({
+            message : "User's details",
+            details : result.rows[0],
+            isAdmin : req.isAdmin ? true : false,
+            isUser : req.userId ? true : false
         })
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;
@@ -128,12 +155,13 @@ module.exports.postEmployee = async (req,res,next) => {
 
 
 module.exports.loginEmployee = async (req,res,next) => {
-    const e_emial = req.body.e_email;
+    const e_email = req.body.e_email;
     const e_password = req.body.e_password;
-
+    const organization = req.body.organization;
+    
     try {
         // 1. Check if emplyoee exists or not
-        const result = await Employee.find('e_email' , e_emial);
+        const result = await Employee.findInOrganization('e_email' , e_email, organization);
         if(result.rows.length === 0){
             const err = new Error("Employee not found for this organization");
             err.statusCode = 401;

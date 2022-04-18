@@ -21,12 +21,20 @@ import MainLayout from "./components/UI/MainLayout/MainLayout";
 function App() {
   const { isLoggedIn } = useContext(authContext);
   const URL = process.env.REACT_APP_API_URL;
-
+  console.log(URL);
   return (
     <>
       <Routes>
-        <Route path="login" element={<Login />} />
-        <Route path="signup" element={<Signup />} />
+        <Route path="login" element={<Login api_url={URL} employeeLogin={false} />} />
+        <Route path="signup" element={<Signup api_url={URL}/>} />
+
+        <Route
+          path="login/:orgId"
+          element={
+            <Login api_url={URL}  employeeLogin={true}/>
+          }
+        />
+
         <Route
           path="/"
           element={

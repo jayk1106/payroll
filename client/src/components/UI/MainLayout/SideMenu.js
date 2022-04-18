@@ -1,5 +1,5 @@
 import { useContext } from "react";
-
+import { Link } from 'react-router-dom';
 import {
   WalletOutlined,
   UserOutlined,
@@ -15,8 +15,9 @@ import { Layout, Menu, Modal } from "antd";
 import authContext from "../../../context/auth/authContext";
 import Icon from "../../UI/Icon/Icon";
 const { Sider } = Layout;
+
 const SideMenu = () => {
-  const { logout } = useContext(authContext);
+  const { logout, isAdmin } = useContext(authContext);
 
   const confirm = () => {
     Modal.confirm({
@@ -53,7 +54,23 @@ const SideMenu = () => {
         style={{ width: "300px", paddingLeft: "30px", fontSize: "17px" }}
         className="main-layout__menu"
       >
-        <Menu.Item
+        {!isAdmin && 
+          <Menu.Item
+          key="9"
+          icon={
+            <Icon active={currPath === "/activity" ? true : false}>
+              <LineChartOutlined style={{ fontSize: "18px" }} />
+            </Icon>
+          }
+          className="main-layout__menu-item"
+          style={{ width: "200px", height: "50px" }}
+        >
+          <Link to='/activity'>
+            Activity
+          </Link>
+        </Menu.Item>
+        }
+        { isAdmin && <> <Menu.Item
           key="1"
           icon={
             <Icon active={currPath === "/dashboard" ? true : false}>
@@ -63,7 +80,9 @@ const SideMenu = () => {
           className="main-layout__menu-item"
           style={{ width: "200px", height: "50px" }}
         >
-          Dashboard
+          <Link to='/dashboard'>
+            Dashboard
+          </Link>
         </Menu.Item>
         <Menu.Item
           key="2"
@@ -75,81 +94,58 @@ const SideMenu = () => {
           className="main-layout__menu-item"
           style={{ width: "200px", height: "50px" }}
         >
-          Employees
+          <Link to='/employees'>
+            Employees
+          </Link>
         </Menu.Item>
-        <Menu.Item
-          key="3"
-          icon={
-            <Icon active={false}>
-              <WalletOutlined style={{ fontSize: "18px" }} />
-            </Icon>
-          }
-          className="main-layout__menu-item"
-          style={{ width: "200px", height: "50px" }}
-        >
-          Salary
-        </Menu.Item>
+        
+        </>
+        }
         <Menu.Item
           key="5"
           icon={
-            <Icon active={false}>
+            <Icon active={currPath === "/requests" ? true : false}>
               <SwapOutlined style={{ fontSize: "18px" }} />
             </Icon>
           }
           className="main-layout__menu-item"
           style={{ width: "200px", height: "50px" }}
         >
-          Requests
+          <Link to='/requests'>
+            Requests
+          </Link>
         </Menu.Item>
         <Menu.Item
-          key="6"
+          key="3"
           icon={
-            <Icon active={false}>
-              <StockOutlined style={{ fontSize: "18px" }} />
+            <Icon active={currPath === "/salary" ? true : false}>
+              <WalletOutlined style={{ fontSize: "18px" }} />
             </Icon>
           }
           className="main-layout__menu-item"
           style={{ width: "200px", height: "50px" }}
         >
-          Loan
+          <Link to='/salary'>
+            Salary
+          </Link>
         </Menu.Item>
-        <Menu.Item
-          key="7"
-          icon={
-            <Icon active={false}>
-              <StockOutlined style={{ fontSize: "18px" }} />
-            </Icon>
-          }
-          className="main-layout__menu-item"
-          style={{ width: "200px", height: "50px" }}
-        >
-          Credits
-        </Menu.Item>
+        
         <div className="sub-heading">Account Pages</div>
         <Menu.Item
           key="8"
           icon={
-            <Icon active={false}>
+            <Icon active={currPath === "/profile" ? true : false}>
               <UserOutlined style={{ fontSize: "18px" }} />
             </Icon>
           }
           className="main-layout__menu-item"
           style={{ width: "200px", height: "50px" }}
         >
-          Profile
+          <Link to='/profile'>
+            Profile
+          </Link>
         </Menu.Item>
-        <Menu.Item
-          key="9"
-          icon={
-            <Icon active={false}>
-              <LineChartOutlined style={{ fontSize: "18px" }} />
-            </Icon>
-          }
-          className="main-layout__menu-item"
-          style={{ width: "200px", height: "50px" }}
-        >
-          Activity
-        </Menu.Item>
+        
         <Menu.Item
           key="10"
           onClick={confirm}

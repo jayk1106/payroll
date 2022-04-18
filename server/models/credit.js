@@ -31,7 +31,7 @@ module.exports = class Credit{
         return pool.query(`DELETE FROM credits WHERE id = $1`, [id]);
     }
 
-    static numberOfPending(){
-        return pool.query(`SELECT COUNT(id) from credits WHERE status = 'Pending'`);
+    static numberOfPending(orgId){
+        return pool.query(`SELECT COUNT(credits.id) from credits JOIN employees ON credits.employee = employees.id WHERE status = 'Pending' AND employees.organization = $1`,[orgId]);
     }
 }

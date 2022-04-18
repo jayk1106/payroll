@@ -2,12 +2,15 @@ import { useContext } from "react";
 import { Form, Input, Button, Alert } from "antd";
 import authContext from "../../context/auth/authContext";
 import useHttp from "../../hooks/useHttp";
+import { useParams } from "react-router-dom";
 
 import style from "./Login.module.css";
 
-const Login = () => {
+const Login = (props) => {
   const { login } = useContext(authContext);
   const { isLoadding, error, sendRequest } = useHttp();
+
+  const { orgId } = useParams();
 
   let errorContent = "";
 
@@ -15,9 +18,12 @@ const Login = () => {
     errorContent = <Alert message={error} type="error" showIcon closable />;
   }
 
+  
+
   const onLoginHandler = async (values) => {
-    const data = await sendRequest({
-      url: "http://192.168.29.213:8080/api/v1/user/login",
+  
+    let requestData = {
+      url: `${props.api_url}/user/login`,
       options: {
         method: "POST",
         headers: {
@@ -25,12 +31,30 @@ const Login = () => {
         },
         body: JSON.stringify(values),
       },
-    });
+    };
+  
+    if(props.employeeLogin){
+      requestData = {
+        url: `${props.api_url}/employee/login`,
+        options: {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        },
+      }
+    }
+    const data = await sendRequest(requestData);
     console.log(data);
-    if (data && data.user.token) {
+    if (data && data?.user?.token) {
       login(data.user.token, data.user.organizationId);
     }
-    if (data && data.error) {
+    if(data && data?.employee?.token){
+      console.log(data.employee.token, data.employee.organization);
+      login(data.employee.token , data.employee.organization);
+    }
+    if (data && data?.error) {
       errorContent = (
         <Alert message={data.error} type="error" showIcon closable />
       );
@@ -52,10 +76,14 @@ const Login = () => {
           // requiredMark={requiredMark}
           onFinish={onLoginHandler}
         >
-          <Form.Item label="Email" name="email" required>
+          { props.employeeLogin && <Form.Item hidden={true} name="organization" initialValue={orgId}>
+            <Input />
+          </Form.Item>
+          }
+          <Form.Item label="Email" name={props.employeeLogin ? "e_email" : "email"} required>
             <Input className={style.input} placeholder="Enter your Email" />
           </Form.Item>
-          <Form.Item label="Password" name="password" required>
+          <Form.Item label="Password" name={ props.employeeLogin ? "e_password" : "password"} required>
             <Input.Password
               className={style.input}
               placeholder="Enter your Password"
@@ -72,7 +100,7 @@ const Login = () => {
             </Button>
           </Form.Item>
         </Form>
-        <p>Don't have an account? Sign up</p>
+        { !props.employeeLogin && <p>Don't have an account? Sign up</p>}
       </div>
     </div>
   );

@@ -30,7 +30,7 @@ module.exports = class Loan{
     static deleteById(id){
         return pool.query(`DELETE FROM loans WHERE id = $1`, [id]);
     }
-    static numberOfPending(){
-        return pool.query(`SELECT COUNT(status) from loans WHERE status = 'Pending'`);
+    static numberOfPending(orgId){
+        return pool.query(`SELECT COUNT(loans.status) from loans JOIN employees ON loans.employee = employees.id WHERE status = 'Pending' AND employees.organization = $1`,[orgId]);
     }
 }
