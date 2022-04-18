@@ -50,6 +50,11 @@ module.exports.getAllSalaryForOrganization = async (req,res,next) => {
     }
 }
 
+
+module.exports.generateSalary = async (req, res, next) => {
+    
+}
+
 module.exports.postSalary = async (req,res,next) => {
     const amount = req.body.amount;
     const start_date = req.body.start_date;

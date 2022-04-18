@@ -17,6 +17,8 @@ const AuthState = (props) => {
       : null
   );
 
+  const [id, setId] = useState(null);
+
   const navigate = useNavigate();
 
 
@@ -40,12 +42,15 @@ const AuthState = (props) => {
     if(isLoggedIn) getAdminStatus();
   },[isLoggedIn]);
 
-  const login = (token, orgId = null, redirectUrl = "/dashboard") => {
+  const login = (token, orgId = null, id = null ,redirectUrl = "/dashboard" ) => {
     localStorage.setItem("token", token);
     setIsLoggedIn(true);
 
     localStorage.setItem("organizationId", orgId);
     setOrganizationId(orgId);
+
+    localStorage.setItem("id",id);
+    setId(id);
 
     if (!orgId) {
       return navigate("/create-organization");
@@ -68,7 +73,7 @@ const AuthState = (props) => {
   };
   return (
     <authContext.Provider
-      value={{ isLoggedIn, organizationId, login, logout, setOrganization, isAdmin }}
+      value={{ id, isLoggedIn, organizationId, login, logout, setOrganization, isAdmin }}
     >
       {props.children}
     </authContext.Provider>

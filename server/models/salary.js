@@ -38,7 +38,7 @@ module.exports = class Salary{
             if(month == 12){
                 endDate = `${year+1}-01-01`;
             }
-            console.log(startDate,endDate);
+            // console.log(startDate,endDate);
             return pool.query(`SELECT * FROM salary JOIN employees ON salary.employee = employees.id WHERE employees.organization = $1 AND salary.end_date BETWEEN $2 AND $3`,[orgId,startDate,endDate]);
         }
         return pool.query(`SELECT * FROM salary JOIN employees ON salary.employee = employees.id WHERE employees.organization = $1`,[orgId]);

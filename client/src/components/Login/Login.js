@@ -19,7 +19,6 @@ const Login = (props) => {
     errorContent = <Alert message={error} type="error" showIcon closable />;
   }
 
-  
 
   const onLoginHandler = async (values) => {
   
@@ -49,11 +48,11 @@ const Login = (props) => {
     const data = await sendRequest(requestData);
     console.log(data);
     if (data && data?.user?.token) {
-      login(data.user.token, data.user.organizationId);
+      login(data.user.token, data.user.organizationId, data.user.id);
     }
     if(data && data?.employee?.token){
       console.log(data.employee.token, data.employee.organization);
-      login(data.employee.token , data.employee.organization);
+      login(data.employee.token , data.employee.organization, data.employee.id);
     }
     if (data && data?.error) {
       errorContent = (

@@ -28,7 +28,6 @@ module.exports.getCurrentEmployessDetails = async (req, res, next) =>{
         if(empId){
             result =  await Employee.getEmployeeProfile(empId);
             // console.log(result.rows);
-            
         }
         if(userId){
             result = await User.find('id',userId);
@@ -37,7 +36,7 @@ module.exports.getCurrentEmployessDetails = async (req, res, next) =>{
         res.status(200).json({
             message : "User's details",
             details : result.rows[0],
-            isAdmin : req.isAdmin ? true : false,
+            // isAdmin : req.isAdmin ? true : false // PENDING,
             isUser : req.userId ? true : false
         })
     } catch (err) {
@@ -49,9 +48,10 @@ module.exports.getCurrentEmployessDetails = async (req, res, next) =>{
 module.exports.getEmployeeProfile = async (req,res,next) => {
 
     const empId = req.params.empId;
+
     try {
         const result =  await Employee.getEmployeeProfile(empId);
-        console.log(result.rows);
+        // console.log(result.rows);
         res.status(200).json({
             message : "Employee's details",
             details : result.rows[0],
@@ -77,7 +77,7 @@ module.exports.putMakAdmin = async (req, res, next) => {
         if(err.statusCode) err.statusCode = 500;
         next(err);
     }
-}
+}  
 
 module.exports.postEmployee = async (req,res,next) => {
 
