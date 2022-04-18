@@ -182,6 +182,7 @@ export default function RequestData(props) {
       },
     },
   ];
+
   return (
     <>
       {isLoadding && (
@@ -221,22 +222,24 @@ export default function RequestData(props) {
       >
         {modalData && (
           <>
-            <p>Title : {modalData[0]?.title}</p>
-            <p>Description : {modalData[0]?.description}</p>
-            <p>Requested By : {modalData[0]?.avatar.name}</p>
-            <p>Amount : {modalData[0]?.amount}</p>
-            <Space direction="horizontal">
-              <Button type="primary" onClick={settleRequest.bind(null, true)}>
-                Accept
-              </Button>
-              <Button
-                type="primary"
-                onClick={settleRequest.bind(null, false)}
-                danger
-              >
-                Reject
-              </Button>
-            </Space>
+            <p>Title : {modalData[0].title}</p>
+            <p>Description : {modalData[0].description}</p>
+            <p>Requested By : {modalData[0].avatar.name}</p>
+            <p>Amount : {modalData[0].amount}</p>
+            {!modalData[0].is_settled && (
+              <Space direction="horizontal">
+                <Button type="primary" onClick={settleRequest.bind(null, true)}>
+                  Accept
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={settleRequest.bind(null, false)}
+                  danger
+                >
+                  Reject
+                </Button>
+              </Space>
+            )}
           </>
         )}
       </Modal>

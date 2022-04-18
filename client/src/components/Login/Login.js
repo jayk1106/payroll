@@ -19,12 +19,9 @@ const Login = (props) => {
     errorContent = <Alert message={error} type="error" showIcon closable />;
   }
 
-  
-
   const onLoginHandler = async (values) => {
-  
     let requestData = {
-      url: `${props.api_url}/user/login`,
+      url: `${URL}/user/login`,
       options: {
         method: "POST",
         headers: {
@@ -33,10 +30,10 @@ const Login = (props) => {
         body: JSON.stringify(values),
       },
     };
-  
-    if(props.employeeLogin){
+
+    if (props.employeeLogin) {
       requestData = {
-        url: `${props.api_url}/employee/login`,
+        url: `${URL}/employee/login`,
         options: {
           method: "POST",
           headers: {
@@ -44,16 +41,15 @@ const Login = (props) => {
           },
           body: JSON.stringify(values),
         },
-      }
+      };
     }
     const data = await sendRequest(requestData);
-    console.log(data);
+
     if (data && data?.user?.token) {
       login(data.user.token, data.user.organizationId);
     }
-    if(data && data?.employee?.token){
-      console.log(data.employee.token, data.employee.organization);
-      login(data.employee.token , data.employee.organization);
+    if (data && data?.employee?.token) {
+      login(data.employee.token, data.employee.organization, "/activity");
     }
     if (data && data?.error) {
       errorContent = (
@@ -77,14 +73,23 @@ const Login = (props) => {
           // requiredMark={requiredMark}
           onFinish={onLoginHandler}
         >
-          { props.employeeLogin && <Form.Item hidden={true} name="organization" initialValue={orgId}>
-            <Input />
-          </Form.Item>
-          }
-          <Form.Item label="Email" name={props.employeeLogin ? "e_email" : "email"} required>
+          {props.employeeLogin && (
+            <Form.Item hidden={true} name="organization" initialValue={orgId}>
+              <Input />
+            </Form.Item>
+          )}
+          <Form.Item
+            label="Email"
+            name={props.employeeLogin ? "e_email" : "email"}
+            required
+          >
             <Input className={style.input} placeholder="Enter your Email" />
           </Form.Item>
-          <Form.Item label="Password" name={ props.employeeLogin ? "e_password" : "password"} required>
+          <Form.Item
+            label="Password"
+            name={props.employeeLogin ? "e_password" : "password"}
+            required
+          >
             <Input.Password
               className={style.input}
               placeholder="Enter your Password"
@@ -101,7 +106,7 @@ const Login = (props) => {
             </Button>
           </Form.Item>
         </Form>
-        { !props.employeeLogin && <p>Don't have an account? Sign up</p>}
+        {!props.employeeLogin && <p>Don't have an account? Sign up</p>}
       </div>
     </div>
   );

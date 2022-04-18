@@ -23,20 +23,21 @@ import authContext from "./context/auth/authContext";
 import MainLayout from "./components/UI/MainLayout/MainLayout";
 
 function App() {
-  const { isLoggedIn } = useContext(authContext);
+  const { isLoggedIn, isAdmin } = useContext(authContext);
   const URL = process.env.REACT_APP_API_URL;
-  console.log(URL);
+
   return (
     <>
       <Routes>
-        <Route path="login" element={<Login api_url={URL} employeeLogin={false} />} />
-        <Route path="signup" element={<Signup api_url={URL}/>} />
+        <Route
+          path="login"
+          element={<Login api_url={URL} employeeLogin={false} />}
+        />
+        <Route path="signup" element={<Signup api_url={URL} />} />
 
         <Route
           path="login/:orgId"
-          element={
-            <Login api_url={URL}  employeeLogin={true}/>
-          }
+          element={<Login api_url={URL} employeeLogin={true} />}
         />
         <Route path="login" element={<Login api_url={URL} />} />
         <Route path="signup" element={<Signup api_url={URL} />} />
@@ -44,7 +45,11 @@ function App() {
           path="/"
           element={
             isLoggedIn ? (
-              <Navigate to="/dashboard" replace />
+              isAdmin ? (
+                <Navigate to="/dashboard" replace />
+              ) : (
+                <Navigate to="/activity" replace />
+              )
             ) : (
               <Navigate to="/login" replace />
             )
@@ -104,9 +109,15 @@ function App() {
           path="dashboard"
           element={
             isLoggedIn ? (
-              <MainLayout>
-                <Dashboard api_url={URL} />
-              </MainLayout>
+              isAdmin ? (
+                <MainLayout>
+                  <Dashboard api_url={URL} />
+                </MainLayout>
+              ) : (
+                <MainLayout>
+                  <PageNotFound />
+                </MainLayout>
+              )
             ) : (
               <Navigate to="/login" replace />
             )
