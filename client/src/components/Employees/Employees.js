@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Avatar, Table, Button, Modal, Spin } from "antd";
+import { Avatar, Table, Button, Modal, Spin, Alert } from "antd";
 import { useNavigate } from "react-router-dom";
 
 import useHttp from "../../hooks/useHttp";
@@ -15,32 +15,36 @@ const Employees = (props) => {
   const { sendRequest, isLoadding, error } = useHttp();
 
   const [employees, setEmployees] = useState([]);
-
+  let errorContent;
   const getEmployees = async () => {
-    const res = await sendRequest({
-      url: `${URL}/employee/all/${organizationId}`,
-      options: {
-        headers: {
-          Authorization: localStorage.getItem("token"),
-        },
-      },
-    });
-
-    if (!res || res.employees.length === 0 || error) {
-      return;
-    }
-
-    if (res && res.employees && res.employees.length > 0) {
-      setEmployees(
-        res.employees.map((e) => ({
-          ...e,
-          avatar: {
-            name: e.e_fname + " " + e.e_lname,
-            email: e.e_email,
+    try {
+      const res = await sendRequest({
+        url: `${URL}/employee/all/${organizationId}`,
+        options: {
+          headers: {
+            Authorization: localStorage.getItem("token"),
           },
-          employeeId: e.id,
-        }))
-      );
+        },
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (res && res.employees && res.employees.length > 0) {
+        setEmployees(
+          res.employees.map((e) => ({
+            ...e,
+            avatar: {
+              name: e.e_fname + " " + e.e_lname,
+              email: e.e_email,
+            },
+            employeeId: e.id,
+          }))
+        );
+      }
+    } catch (error) {
+      errorContent = error;
     }
   };
 
@@ -123,17 +127,30 @@ const Employees = (props) => {
       >
         <AddEmployee data={null} closeModal={handleCancel} url={URL} />
       </Modal>
+      {error && (
+        <>
+          <div className="errorContainer">
+            <Alert
+              message="Somthing went wrong!"
+              type="error"
+              showIcon
+              closable
+            />
+          </div>
+        </>
+      )}
       {isLoadding && (
         <div className="example">
           <Spin />
         </div>
       )}
-      {!isLoadding && (
+      {!isLoadding && !error && (
         <Table
           className="table"
           pagination={{ pageSize: 5 }}
           dataSource={employees}
           columns={columns}
+          rowKey="id"
         />
       )}
     </>

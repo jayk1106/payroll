@@ -21,6 +21,14 @@
   margin-bottom: 20px;
   padding: 30px 50px;
   text-align: center;
-  background: rgba(0, 0, 0, 0.05);
+  background-color: #f7fafc;
   border-radius: 4px;
+}
+
+.errorContainer {
+  width: 60%;
+  height: auto;
+  margin: auto;
+  margin-top: 2%;
+  padding: auto;
 }

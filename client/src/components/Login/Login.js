@@ -7,6 +7,7 @@ import { useParams } from "react-router-dom";
 import style from "./Login.module.css";
 
 const Login = (props) => {
+  const URL = props.api_url;
   const { login } = useContext(authContext);
   const { isLoadding, error, sendRequest } = useHttp();
 

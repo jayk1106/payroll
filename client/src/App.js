@@ -11,6 +11,10 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import CreateOrganization from "./components/Organization/CreateOrganization";
 import UserProfile from "./components/Profile/UserProfile";
 import Requests from "./components/Request/Requests";
+import Profile from "./components/Profile/Profile";
+import Salary from "./components/Salary/Salary";
+import SalaryDetails from "./components/Salary/SalaryDetails";
+import PageNotFound from "./components/Error/PageNotFound";
 // const { Content, Footer, Sider } = Layout;
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
@@ -34,7 +38,8 @@ function App() {
             <Login api_url={URL}  employeeLogin={true}/>
           }
         />
-
+        <Route path="login" element={<Login api_url={URL} />} />
+        <Route path="signup" element={<Signup api_url={URL} />} />
         <Route
           path="/"
           element={
@@ -70,6 +75,19 @@ function App() {
         />
 
         <Route
+          path="profile"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <Profile api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
           path="employees/:employeeId"
           element={
             isLoggedIn ? (
@@ -87,7 +105,7 @@ function App() {
           element={
             isLoggedIn ? (
               <MainLayout>
-                <Dashboard />
+                <Dashboard api_url={URL} />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />
@@ -101,6 +119,45 @@ function App() {
             isLoggedIn ? (
               <MainLayout>
                 <Requests api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="salary"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <Salary api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="salary/:salaryId"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <SalaryDetails api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <PageNotFound />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />

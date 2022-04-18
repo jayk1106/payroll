@@ -1,9 +1,18 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Avatar, Table, Tag, Tabs, Modal, Button, Spin } from "antd";
+import {
+  Avatar,
+  Table,
+  Tag,
+  Modal,
+  Button,
+  Spin,
+  Space,
+  Alert,
+  message,
+} from "antd";
 
 import useHttp from "../../hooks/useHttp";
 import authContext from "../../context/auth/authContext";
-import RequestDetails from "./RequestDetails";
 import style from "./Requests.module.css";
 
 export default function RequestData(props) {
@@ -18,37 +27,45 @@ export default function RequestData(props) {
   const { organizationId } = useContext(authContext);
 
   const getRequestData = async () => {
-    const res = await sendRequest({
-      url: `${URL}/${key}/all/${organizationId}`,
-      options: {
-        headers: {
-          Authorization: localStorage.getItem("token"),
+    try {
+      const res = await sendRequest({
+        url: `${URL}/${key}/all/${organizationId}`,
+        options: {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
         },
-      },
-    });
+      });
 
-    if (key == "credit" && res && res.credits) {
-      setRequestData(
-        res.credits.map((credit) => ({
-          ...credit,
-          avatar: {
-            name: credit.e_fname + " " + credit.e_lname,
-            email: credit.e_email,
-          },
-        }))
-      );
-    }
+      if (error) {
+        throw new Error(error);
+      }
 
-    if (key == "loan" && res) {
-      setRequestData(
-        res.loans.map((loan) => ({
-          ...loan,
-          avatar: {
-            name: loan.e_fname + " " + loan.e_lname,
-            email: loan.e_email,
-          },
-        }))
-      );
+      if (key === "credit" && res && res.credits) {
+        setRequestData(
+          res.credits.map((credit) => ({
+            ...credit,
+            avatar: {
+              name: credit.e_fname + " " + credit.e_lname,
+              email: credit.e_email,
+            },
+          }))
+        );
+      }
+
+      if (key === "loan" && res && res.loans) {
+        setRequestData(
+          res.loans.map((loan) => ({
+            ...loan,
+            avatar: {
+              name: loan.e_fname + " " + loan.e_lname,
+              email: loan.e_email,
+            },
+          }))
+        );
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -67,6 +84,45 @@ export default function RequestData(props) {
 
   const handleCancel = () => {
     setIsModalVisible(false);
+  };
+
+  const getMessage = (msg) => {
+    message.success(msg);
+  };
+
+  const settleRequest = async (isAccept) => {
+    let url;
+
+    if (isAccept) {
+      url = `${URL}/${key}/settle/${modalData[0].id}`;
+    } else {
+      url = `${URL}/${key}/settle/${modalData[0].id}?reject=true`;
+    }
+    try {
+      const res = await sendRequest({
+        url: url,
+        options: {
+          method: "PUT",
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        },
+      });
+
+      if (error) {
+        console.log(error);
+        handleCancel();
+        throw new Error(error);
+      }
+
+      if (res) {
+        console.log(res);
+        handleOk();
+        getMessage(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const columns = [
@@ -128,7 +184,34 @@ export default function RequestData(props) {
   ];
   return (
     <>
-      <Table columns={columns} dataSource={requestData} />
+      {isLoadding && (
+        <div className={style.example}>
+          <Spin />
+        </div>
+      )}
+
+      {error && (
+        <>
+          <div className={style.errorContainer}>
+            <Alert
+              message="Somthing went wrong!"
+              type="error"
+              showIcon
+              closable
+            />
+          </div>
+        </>
+      )}
+
+      {!isLoadding && !error && (
+        <Table
+          columns={columns}
+          dataSource={requestData}
+          pagination={{ pageSize: 5 }}
+          rowKey="id"
+          className={style.table}
+        />
+      )}
       <Modal
         title="Request Details"
         visible={isModalVisible}
@@ -136,12 +219,26 @@ export default function RequestData(props) {
         onCancel={handleCancel}
         style={{ top: 20 }}
       >
-        <RequestDetails
-          api_url={URL}
-          requestType={key}
-          data={modalData}
-          close={handleOk}
-        />
+        {modalData && (
+          <>
+            <p>Title : {modalData[0]?.title}</p>
+            <p>Description : {modalData[0]?.description}</p>
+            <p>Requested By : {modalData[0]?.avatar.name}</p>
+            <p>Amount : {modalData[0]?.amount}</p>
+            <Space direction="horizontal">
+              <Button type="primary" onClick={settleRequest.bind(null, true)}>
+                Accept
+              </Button>
+              <Button
+                type="primary"
+                onClick={settleRequest.bind(null, false)}
+                danger
+              >
+                Reject
+              </Button>
+            </Space>
+          </>
+        )}
       </Modal>
     </>
   );
