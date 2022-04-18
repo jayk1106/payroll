@@ -1,14 +1,68 @@
-import React, { useState } from "react";
-import { Avatar, Table, Tag, Button, Modal } from "antd";
+import React, { useState, useContext, useEffect } from "react";
+import {
+  Avatar,
+  Alert,
+  Table,
+  Tag,
+  Button,
+  Modal,
+  Spin,
+  Space,
+  message,
+} from "antd";
 
-import RequestDetails from "./RequestDetails";
+import useHttp from "../../hooks/useHttp";
+import authContext from "../../context/auth/authContext";
 import style from "./Requests.module.css";
 
-export default function LeaveTable() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
+export default function LeaveTable(props) {
+  const URL = props.api_url;
+  const key = "leave";
+  const { isLoadding, error, sendRequest } = useHttp();
+  const { organizationId } = useContext(authContext);
 
-  const showModal = () => {
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [leaveData, setLeaveData] = useState([]);
+  const [modalData, setModalData] = useState();
+
+  const getRequestData = async () => {
+    try {
+      const res = await sendRequest({
+        url: `${URL}/${key}/all/${organizationId}`,
+        options: {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        },
+      });
+
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (res) {
+        setLeaveData(
+          res.loans.map((loan) => ({
+            ...loan,
+            avatar: {
+              name: loan.e_fname + " " + loan.e_lname,
+              email: loan.e_email,
+            },
+          }))
+        );
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getRequestData();
+  }, [isModalVisible]);
+
+  const showModal = (id) => {
     setIsModalVisible(true);
+    setModalData(leaveData.filter((cd) => cd.id === id));
   };
 
   const handleOk = () => {
@@ -19,40 +73,48 @@ export default function LeaveTable() {
     setIsModalVisible(false);
   };
 
-  const dataSource_leave = [
-    {
-      key: "1",
-      name: "Mike",
-      title: "Leave for Sickness",
-      status: "Pending",
-    },
-    {
-      key: "2",
-      name: "Jay",
-      title: "Leave for Date",
-      status: "Rejected",
-    },
-    {
-      key: "3",
-      name: "Jay",
-      title: "Leave for Marriage",
-      status: "Approved",
-    },
-  ];
+  const getMessage = (msg) => {
+    message.success(msg);
+  };
+
+  const settleRequest = async (isAccept) => {
+    let url;
+
+    if (isAccept) {
+      url = `${URL}/${key}/settle/${modalData[0].id}`;
+    } else {
+      url = `${URL}/${key}/settle/${modalData[0].id}?reject=true`;
+    }
+
+    const res = await sendRequest({
+      url: url,
+      options: {
+        method: "PUT",
+        headers: {
+          Authorization: localStorage.getItem("token"),
+        },
+      },
+    });
+
+    if (res) {
+      handleOk();
+      getMessage(res.message);
+    }
+  };
 
   const columns = [
     {
       title: "Name",
-      dataIndex: "name",
+      dataIndex: "avatar",
       key: "name",
       onClick: showModal,
       render: (value) => {
         return (
           <div className={style.avatar}>
-            <Avatar> {value[0].toUpperCase()}</Avatar>
+            <Avatar>{value.name[0].toUpperCase()}</Avatar>
             <div className={style.avatar__details}>
-              {value} <br />
-              kaneriyajay3@gmail.com
+              {value.name} <br />
+              {value.email}
             </div>
           </div>
         );
@@ -63,6 +125,7 @@ export default function LeaveTable() {
       dataIndex: "title",
       key: "title",
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -81,24 +144,47 @@ export default function LeaveTable() {
     },
     {
       title: "Details",
-      dataIndex: "details",
-      key: "details",
+      dataIndex: "id",
+      key: "id",
       render: (value) => {
         return (
-          <Button type="primary" onClick={showModal}>
+          <Button type="primary" onClick={showModal.bind(null, value)}>
             Show Details
           </Button>
         );
       },
     },
   ];
+
   return (
     <>
-      <Table
-        className={style.table}
-        dataSource={dataSource_leave}
-        columns={columns}
-      />
+      {isLoadding && (
+        <div className={style.example}>
+          <Spin />
+        </div>
+      )}
+      {error && (
+        <>
+          <div className={style.errorContainer}>
+            <Alert
+              message="Somthing went wrong!"
+              type="error"
+              showIcon
+              closable
+            />
+          </div>
+        </>
+      )}
+      {!isLoadding && !error && (
+        <Table
+          className={style.table}
+          dataSource={leaveData}
+          columns={columns}
+          pagination={{ pageSize: 5 }}
+          rowKey="id"
+        />
+      )}
+
       <Modal
         title="Details"
         visible={isModalVisible}
@@ -106,7 +192,25 @@ export default function LeaveTable() {
         onCancel={handleCancel}
         style={{ top: 20 }}
       >
-        <RequestDetails />
+        {modalData && (
+          <>
+            <p>Title : {modalData[0]?.title}</p>
+            <p>Description : {modalData[0]?.description}</p>
+            <p>Requested By : {modalData[0]?.avatar.name}</p>
+            <Space direction="horizontal">
+              <Button type="primary" onClick={settleRequest.bind(null, true)}>
+                Accept
+              </Button>
+              <Button
+                type="primary"
+                onClick={settleRequest.bind(null, false)}
+                danger
+              >
+                Reject
+              </Button>
+            </Space>
+          </>
+        )}
       </Modal>
     </>
   );

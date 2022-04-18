@@ -1,43 +1,42 @@
-import React from 'react';
-import { List, Avatar, Button } from 'antd';
-import style from './ListView.module.css';
+import React from "react";
+import { List, Avatar, Button } from "antd";
+import { Link } from "react-router-dom";
+
+import style from "./ListView.module.css";
 
 const ListView = (props) => {
-    const data = [
-        {
-            id : 1,
-            name : 'Jay Kaneriya',
-            email : 'kaneriyajay3@gmail.com',
-        },
-        {
-            id : 2,
-            name : 'Jay Kaneriya',
-            email : 'kaneriyajay3@gmail.com',
-        },
-        {
-            id : 3,
-            name : 'Digvijay Chauhan',
-            email : 'ddchauhan610@gmail.com'
-        }
-    ]
-    return (
-        <div className={style.container}>
-            <div className={style.label}>Latest Employees</div>
-            <List 
+  const data = props.latestEmployees;
+
+  return (
+    <div className={style.container}>
+      <div className={style.label}>Latest Employees</div>
+      {data && (
+        <>
+          <List
             dataSource={data}
-            renderItem={item =>(
-                <List.Item key={item.id}>
+            renderItem={(item) => (
+              <List.Item key={item.id}>
                 <List.Item.Meta
-                    avatar={<Avatar>{item.name[0].toUpperCase()}</Avatar>}
-                    title={<a href="https://ant.design">{item.name}</a>}
-                    description={item.email}
+                  avatar={<Avatar>{item.e_fname[0].toUpperCase()}</Avatar>}
+                  title={
+                    <Link to={{ pathname: `/employees/${item.id}` }}>
+                      {item.e_fname + " " + item.e_lname}
+                    </Link>
+                  }
+                  description={item.e_email}
                 />
-                </List.Item>
+              </List.Item>
             )}
-            />
-            <div className="action"><Button type="text">View More &#8594;</Button></div>
-        </div>
-    )
-}
+          />
+          <div className="action">
+            <Button type="text">
+              <Link to="/employees">View More &#8594;</Link>
+            </Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
 
 export default ListView;

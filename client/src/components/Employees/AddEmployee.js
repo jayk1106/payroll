@@ -9,6 +9,7 @@ import {
   DatePicker,
   InputNumber,
   Alert,
+  message,
 } from "antd";
 
 import useHttp from "../../hooks/useHttp";
@@ -57,6 +58,10 @@ const AddEmployee = (props) => {
     setComponentSize(size);
   };
 
+  const getMessage = (msg) => {
+    message.success(msg);
+  };
+
   if (data !== null) {
     isEdit = true;
   }
@@ -103,6 +108,7 @@ const AddEmployee = (props) => {
     if (res) {
       console.log(res);
       props.closeModal();
+      getMessage(res.message);
     }
   };
 

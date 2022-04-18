@@ -5,7 +5,8 @@ import useHttp from "../../hooks/useHttp";
 
 import style from "./Login.module.css";
 
-const Login = () => {
+const Login = (props) => {
+  const URL = props.api_url;
   const { login } = useContext(authContext);
   const { isLoadding, error, sendRequest } = useHttp();
 
@@ -17,7 +18,7 @@ const Login = () => {
 
   const onLoginHandler = async (values) => {
     const data = await sendRequest({
-      url: "http://192.168.29.213:8080/api/v1/user/login",
+      url: `${URL}/user/login`,
       options: {
         method: "POST",
         headers: {

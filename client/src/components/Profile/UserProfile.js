@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Space, Table, Button, Modal, Spin, Tag } from "antd";
+import { Space, Table, Button, Modal, Spin, Tag, Alert } from "antd";
 
 import useHttp from "../../hooks/useHttp";
 import AddEmployee from "../Employees/AddEmployee";
@@ -49,18 +49,26 @@ export default function UserProfile(props) {
 
   const { employeeId } = useParams();
   const getEmployeeData = async () => {
-    const res = await sendRequest({
-      url: `${URL}/employee/${employeeId}`,
-      options: {
-        headers: {
-          Authorization: localStorage.getItem("token"),
+    try {
+      const res = await sendRequest({
+        url: `${URL}/employee/${employeeId}`,
+        options: {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
         },
-      },
-    });
+      });
 
-    if (res && res.details) {
-      setEmployeeData(res.details);
-      setEmployeeIsAdmin(res.isAdmin);
+      if (error) {
+        throw new Error(error);
+      }
+
+      if (res && res.details) {
+        setEmployeeData(res.details);
+        setEmployeeIsAdmin(res.isAdmin);
+      }
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -103,7 +111,20 @@ export default function UserProfile(props) {
         </div>
       )}
 
-      {!isLoadding && (
+      {error && (
+        <>
+          <div className="errorContainer">
+            <Alert
+              message="Somthing went wrong!"
+              type="error"
+              showIcon
+              closable
+            />
+          </div>
+        </>
+      )}
+
+      {!isLoadding && !error && (
         <>
           <Space direction="horizontal" size="large">
             {!employeeIsAdmin && (

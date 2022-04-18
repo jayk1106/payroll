@@ -21,7 +21,7 @@ export default function Requests(props) {
           <RequestData requestType="loan" api_url={URL} />
         </TabPane>
         <TabPane tab="Leave" key="leave">
-          <LeaveTable />
+          <LeaveTable api_url={URL} />
         </TabPane>
       </Tabs>
     </>
