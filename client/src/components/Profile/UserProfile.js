@@ -64,6 +64,7 @@ export default function UserProfile(props) {
       }
 
       if (res && res.details) {
+        console.log(res);
         setEmployeeData(res.details);
         setEmployeeIsAdmin(res.isAdmin);
       }
@@ -101,6 +102,9 @@ export default function UserProfile(props) {
   useEffect(() => {
     getEmployeeData();
   }, [isModalVisible]);
+
+  console.log(employeeData);
+  console.log(employeeIsAdmin);
 
   return (
     <>

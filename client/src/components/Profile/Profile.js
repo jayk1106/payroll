@@ -22,7 +22,6 @@ export default function Profile(props) {
     });
 
     if (res && res.details) {
-      console.log(res);
       setEmployeeData(res.details);
     }
   };
@@ -33,49 +32,66 @@ export default function Profile(props) {
 
   return (
     <>
-      <div className={style.heading}>Employee Profile</div>
       {isLoadding && (
         <div className="example">
           <Spin />
         </div>
       )}
 
-      <div className={style.main}>
-        <Space direction="vertical" size="middle" style={{ display: "flex" }}>
-          <h3 className={style.heading__details}>Personal Information</h3>
-          <div className={style.main__div}>
-            <div className={style.div__left}>
-              <p>Name: {employeeData.e_fname + " " + employeeData.e_lname}</p>
-              <p>Email: {employeeData.e_email}</p>
-            </div>
-            <div className={style.div__right}>
-              <p>Gender: {employeeData.e_gender}</p>
-              <p>Age: {employeeData.e_age}</p>
-            </div>
+      {!isLoadding && (
+        <>
+          <div className={style.heading}>
+            Hii, {employeeData.e_fname + employeeData.e_lname}
           </div>
 
-          <div className={style.divider}></div>
+          <div className={style.main}>
+            <Space
+              direction="vertical"
+              size="middle"
+              style={{ display: "flex" }}
+            >
+              <h3 className={style.heading__details}>
+                Your Personal Information
+              </h3>
+              <div className={style.main__div}>
+                <div className={style.div__left}>
+                  <p>
+                    Name: {employeeData.e_fname + " " + employeeData.e_lname}
+                  </p>
+                  <p>Email: {employeeData.e_email}</p>
+                </div>
+                <div className={style.div__right}>
+                  <p>Gender: {employeeData.e_gender}</p>
+                  <p>Age: {employeeData.e_age}</p>
+                </div>
+              </div>
 
-          <h3 className={style.heading__details}>Organizational Information</h3>
-          <div className={style.main__div}>
-            <div className={style.div__left}>
-              <p>Department: {employeeData.dp_name}</p>
-              <p>Branch: {employeeData.br_name}</p>
-            </div>
-            <div className={style.div__right}>
-              <p>
-                Date Of Join:{" "}
-                {new Date(employeeData.join_date).getDate() +
-                  "/" +
-                  new Date(employeeData.join_date).getMonth() +
-                  "/" +
-                  new Date(employeeData.join_date).getFullYear()}
-              </p>
-              <p>Salary: {employeeData.e_salary_per_year}</p>
-            </div>
+              <div className={style.divider}></div>
+
+              <h3 className={style.heading__details}>
+                Your Organizational Information
+              </h3>
+              <div className={style.main__div}>
+                <div className={style.div__left}>
+                  <p>Department: {employeeData.dp_name}</p>
+                  <p>Branch: {employeeData.br_name}</p>
+                </div>
+                <div className={style.div__right}>
+                  <p>
+                    Date Of Join:{" "}
+                    {new Date(employeeData.join_date).getDate() +
+                      "/" +
+                      new Date(employeeData.join_date).getMonth() +
+                      "/" +
+                      new Date(employeeData.join_date).getFullYear()}
+                  </p>
+                  <p>Salary: {employeeData.e_salary_per_year}</p>
+                </div>
+              </div>
+            </Space>
           </div>
-        </Space>
-      </div>
+        </>
+      )}
     </>
   );
 }

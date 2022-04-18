@@ -3,8 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AuthState = (props) => {
-
-
   const [isLoggedIn, setIsLoggedIn] = useState(
     localStorage.getItem("token") ? true : false
   );
@@ -21,26 +19,28 @@ const AuthState = (props) => {
 
   const navigate = useNavigate();
 
-
   const getAdminStatus = async () => {
-    try { 
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/general/admin-status`,{
-        method : 'GET',
-        headers : {
-          'Content-Type' : 'application/json',
-          'Authorization' : localStorage.getItem("token")
+    try {
+      const res = await fetch(
+        `${process.env.REACT_APP_API_URL}/general/admin-status`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: localStorage.getItem("token"),
+          },
         }
-      });
+      );
       const result = await res.json();
       setIsAdmin(result.isAdmin);
     } catch (err) {
       console.log(err);
-    }                                                                                                  
-  }
+    }
+  };
 
-  useEffect(()=>{
-    if(isLoggedIn) getAdminStatus();
-  },[isLoggedIn]);
+  useEffect(() => {
+    if (isLoggedIn) getAdminStatus();
+  }, [isLoggedIn]);
 
   const login = (token, orgId = null, id = null ,redirectUrl = "/dashboard" ) => {
     localStorage.setItem("token", token);
@@ -73,6 +73,7 @@ const AuthState = (props) => {
   };
   return (
     <authContext.Provider
+
       value={{ id, isLoggedIn, organizationId, login, logout, setOrganization, isAdmin }}
     >
       {props.children}
