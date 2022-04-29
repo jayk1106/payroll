@@ -58,7 +58,7 @@ module.exports = class Employee{
     }
 
     static getEmployeeProfile(id){
-        return pool.query(`SELECT employees.id, e_fname, e_lname, e_email, e_gender, e_age, employees.join_date, employees.end_date, department,  branch, employees.organization, e_salary_per_year, payout_time, br_name, dp_name FROM employees JOIN branches ON employees.branch = branches.id JOIN departments ON employees.department = departments.id WHERE employees.id = $1`,[id]);
+        return pool.query(`SELECT employees.id, e_fname, e_lname, e_email, e_gender, e_age, employees.join_date, employees.end_date, department,  branch, employees.organization, e_salary_per_year, employees.permissions, payout_time, br_name, dp_name FROM employees JOIN branches ON employees.branch = branches.id JOIN departments ON employees.department = departments.id WHERE employees.id = $1`,[id]);
     }
 
     static makeAdmin(id){

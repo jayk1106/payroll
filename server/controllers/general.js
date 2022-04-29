@@ -7,17 +7,18 @@ const Employee = require('../models/employee');
 const Branch = require('../models/branch');
 const Department = require('../models/department');
 
-
 module.exports.getAdminStatus = (req, res, next) => {
     if(req.isAdmin){
         return res.status(200).json({
             message : "This user is an Admin",
-            isAdmin : true
+            isAdmin : true,
+            isUser : req.userId ? true : false
         })
     }
     res.status(200).json({
         message : "This user is not an Admin",
-        isAdmin : false
+        isAdmin : false,
+        isUser : req.userId ? true : false
     })
 }
 

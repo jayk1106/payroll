@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 
 const Employee = require('../models/employee');
 const User = require('../models/user');
+const Activity = require('../models/activity');
 const {SECRET_KEY} = require('../util/config');
 
 module.exports.getEmployee = async (req,res,next) => {
@@ -51,11 +52,10 @@ module.exports.getEmployeeProfile = async (req,res,next) => {
 
     try {
         const result =  await Employee.getEmployeeProfile(empId);
-        // console.log(result.rows);
         res.status(200).json({
             message : "Employee's details",
             details : result.rows[0],
-            isAdmin : req.isAdmin ? true : false
+            isAdmin : result.rows[0].permissions === 'c40441eb-06ae-4b67-8cd4-fc15ced1a94e'
         })
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;
@@ -73,6 +73,14 @@ module.exports.putMakAdmin = async (req, res, next) => {
         res.status(200).json({
             message : "Successfully made this employee an Admin"
         });
+
+        const activity = new Activity({
+            type : "Made Admin",
+            message : "You are now Admin",
+            employee : empId
+        })
+
+        await activity.save();
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;
         next(err);
@@ -142,11 +150,18 @@ module.exports.postEmployee = async (req,res,next) => {
         );
         createdEmp.token = token;
 
-        return res.status(201).json({
+        res.status(201).json({
             message : "successfully sign up!",
             employee : createdEmp
         })
 
+        const activity = new Activity({
+            type : "Created Account",
+            message : "You are now added in organization",
+            employee : createdEmp.id
+        })
+
+        await activity.save();
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;
         next(err);
@@ -230,10 +245,18 @@ module.exports.putEmployee = async (req,res,next) => {
         const updatedEmployee = result.rows[0];
 
         // 3. send back updated employee
-        return res.status(200).json({
+        res.status(200).json({
             message : "Employee updated",
             employee : updatedEmployee
         })
+
+        const activity = new Activity({
+            type : "Account Updated",
+            message : "You are now added in organization",
+            employee : updatedEmployee.id
+        })
+
+        await activity.save();
 
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;

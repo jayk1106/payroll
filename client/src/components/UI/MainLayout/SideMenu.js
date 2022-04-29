@@ -18,7 +18,8 @@ const { Sider } = Layout;
 
 const SideMenu = () => {
   const { logout, isAdmin } = useContext(authContext);
-
+  
+  console.log(isAdmin);
   const confirm = () => {
     Modal.confirm({
       title: "Log Out",

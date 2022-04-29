@@ -12,8 +12,8 @@ module.exports = class Organization{
     save(){
         return pool.query("INSERT INTO organization (id , org_name , org_city , org_country , org_address , org_user ) VALUES ( uuid_generate_v4() , $1 , $2 , $3 , $4 , $5) RETURNING *" , [this.org_name , this.org_city , this.org_country , this.org_address , this.org_user]);
     }
-    static fetchAll(){
-        return pool.query("SELECT * FROM organization");
+    static fetchAll(orgId){
+        return pool.query("SELECT * FROM organization WHERE id = $1", [orgId]);
     }
     static update(org){
         return pool.query("UPDATE organization SET org_name = $1 , org_city = $2 , org_country = $3 , org_address = $4 WHERE id = $5 RETURNING *" , [org.org_name , org.org_city , org.org_country , org.org_address , org.id]);

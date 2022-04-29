@@ -14,14 +14,19 @@ module.exports = class Deduction{
     }
 
     static fetchAll(employee){
-        return pool.query(`SELECT * FROM deduction WHERE employee = $1`,[employee]);
+        return pool.query(`SELECT deduction.id, deduction.amount, deduction.title, deduction.description,  deduction.date ,  deduction.employee ,employees.e_fname, employees.e_lname, employees.e_email, deduction_types.dt_title, deduction_types.dt_description FROM deduction JOIN deduction_types ON deduction.type = deduction_types.id JOIN employees ON deduction.employee = employees.id WHERE deduction.employee = $1`,[employee]);
     }
 
     static update(dr){
         return pool.query(`UPDATE deduction SET title = $1, description = $2, type = $3 WHERE id = $4 RETURNING *` , [dr.title, dr.description, dr.type, dr.id]);
     }
-
     static deleteById(id){
         return pool.query(`DELETE FROM deduction WHERE id = $1`, [id]);
+    }
+    static sumOfDeduction(empId , month, year){
+        if(month && year){
+            return pool.query(`SELECT SUM(amount) FROM deduction WHERE employee = $1 AND DATE_PART('month', date) = $2 AND DATE_PART('year',date) = $3`,[empId, month, year]);
+        }
+        return pool.query(`SELECT SUM(amount) FROM deduction WHERE employee = $1`,[empId]);
     }
 }

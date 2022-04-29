@@ -35,7 +35,7 @@ module.exports.getAllLoansForOrganization = async (req,res,next) => {
         const result = await Leave.fetchAllForOrganization(orgId);
         res.status(200).json({
             message : "All leaves for organization",
-            loans : result.rows
+            leaves : result.rows
         })
     } catch (err) {
         if(err.statusCode) err.statusCode = 500;

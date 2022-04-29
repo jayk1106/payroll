@@ -17,7 +17,7 @@ module.exports = class Leave{
     }
 
     static fetchAll(employee){
-        return pool.query(`SELECT * FROM leaves WHERE employee = $1`,[employee]);
+        return pool.query(`SELECT leaves.id, leaves.status, leaves.title, leaves.description, leaves.approve_date, leaves.date , leaves.is_settled, leaves.employee ,employees.e_fname, employees.e_lname, employees.e_email FROM employees JOIN leaves ON employees.id = leaves.employee JOIN leave_types ON leaves.type = leave_types.id WHERE leaves.employee = $1 ORDER BY date DESC`,[employee]);
     }
 
     static update(leave){
@@ -38,6 +38,10 @@ module.exports = class Leave{
     } 
 
     static numberOfPending(orgId){
-        return pool.query(`SELECT COUNT(leaves.id) from leaves JOIN employees ON leaves.employee = employees.id WHERE status = 'Pending' AND employees.organization =  $1`,[orgId]);
+        return pool.query(`SELECT COUNT(leaves.id) FROM leaves JOIN employees ON leaves.employee = employees.id WHERE status = 'Pending' AND employees.organization =  $1`,[orgId]);
+    }
+
+    static getNumLeavePerMonth(empId, month, year){
+        return pool.query(`SELECT SUM(duration_in_days) FROM leaves WHERE is_settled = TRUE AND status = 'Approved' AND employee = $1 AND DATE_PART('month', approve_date) = $2 AND DATE_PART('year',approve_date) = $3`,[empId, month, year]);
     }
 }

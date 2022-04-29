@@ -14,7 +14,7 @@ module.exports = class Loan{
     }
 
     static fetchAll(employee){
-        return pool.query(`SELECT * FROM loans WHERE employee = $1`,[employee]);
+        return pool.query(`SELECT loans.id, loans.status, loans.title, loans.description, loans.amount ,loans.approve_date, loans.date , loans.is_settled, loans.employee ,employees.e_fname, employees.e_lname, employees.e_email FROM employees JOIN loans ON employees.id = loans.employee JOIN loan_types ON loans.type = loan_types.id WHERE employees.id = $1 ORDER BY date DESC`,[employee]);
     }
 
     static update(loan){
@@ -32,5 +32,12 @@ module.exports = class Loan{
     }
     static numberOfPending(orgId){
         return pool.query(`SELECT COUNT(loans.status) from loans JOIN employees ON loans.employee = employees.id WHERE status = 'Pending' AND employees.organization = $1`,[orgId]);
+    }
+
+    static sumOfApprovedLoans(empId , month, year){
+        if(month && year){
+            return pool.query(`SELECT SUM(amount) FROM loans WHERE is_settled = TRUE AND status = 'Approved' AND employee = $1 AND DATE_PART('month', approve_date) = $2 AND DATE_PART('year',approve_date) = $3`,[empId, month, year]);
+        }
+        return pool.query(`SELECT SUM(amount) FROM loans WHERE is_settled = TRUE AND status = 'Approved' AND employee = $1`,[empId]);
     }
 }

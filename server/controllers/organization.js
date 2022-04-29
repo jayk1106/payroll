@@ -3,14 +3,23 @@ const Branch = require('../models/branch');
 const Department = require('../models/department');
 const User = require('../models/user');
 
-module.exports.getOrganization = async (req,res,next) => {    
+module.exports.getOrganization = async (req,res,next) => {  
+    const orgId = req.params.orgId;  
     try {
 
-        const result = await Organization.fetchAll();
+            let result = await Organization.fetchAll(orgId);
+            const organizationDetails = result.rows[0];
 
+            result = await Branch.fetchAll(orgId);
+            const branchesDetails = result.rows
+
+            result = await Department.fetchAll(orgId);
+            const departmentDetails = result.rows;
         res.status(200).json({
-            message : "All Organization",
-            organization : result.rows
+            message : "Organization details",
+            organization : organizationDetails,
+            branches : branchesDetails,
+            departments : departmentDetails
         })
         
     } catch (err) {

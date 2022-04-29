@@ -4,12 +4,16 @@ const deductionControllers = require('../controllers/deduction');
 
 const router = express.Router();
 
-router.get('/:empId' , deductionControllers.getDeduction);
+const authUser = require('../middlewares/auth-user');
+const getPermissions = require('../middlewares/get-permissions');
+const isAdmin = require('../middlewares/isAdmin');
 
-router.post('/' , deductionControllers.postDeduction);
+router.get('/:empId', authUser , deductionControllers.getDeduction);
 
-router.put('/' , deductionControllers.putDeduction);
+router.post('/', authUser, getPermissions, isAdmin , deductionControllers.postDeduction);
 
-router.delete('/:id' , deductionControllers.deleteDeduction);
+router.put('/', authUser, getPermissions, isAdmin , deductionControllers.putDeduction);
+
+router.delete('/:id', authUser, getPermissions, isAdmin , deductionControllers.deleteDeduction);
 
 module.exports = router;

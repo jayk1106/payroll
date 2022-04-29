@@ -14,7 +14,7 @@ module.exports = class Credit{
     }
 
     static fetchAll(employee){
-        return pool.query(`SELECT * FROM credits WHERE employee = $1`,[employee]);
+        return pool.query(`SELECT credits.id, credits.status, credits.title, credits.description, credits.amount, credits.employee ,credits.approve_date, credits.date , credits.is_settled ,employees.e_fname, employees.e_lname, employees.e_email FROM credits JOIN employees ON credits.employee = employees.id WHERE employee = $1 ORDER BY date DESC`,[employee]);
     }
     static fetchAllForOrganization(orgId){
         return pool.query(`SELECT credits.id, credits.status, credits.title, credits.description, credits.amount, credits.employee ,credits.approve_date, credits.date , credits.is_settled ,employees.e_fname, employees.e_lname, employees.e_email FROM employees JOIN credits ON employees.id = credits.employee JOIN credits_types ON credits.type = credits_types.id WHERE employees.organization = $1 ORDER BY date DESC`,[orgId]);
@@ -33,5 +33,12 @@ module.exports = class Credit{
 
     static numberOfPending(orgId){
         return pool.query(`SELECT COUNT(credits.id) from credits JOIN employees ON credits.employee = employees.id WHERE status = 'Pending' AND employees.organization = $1`,[orgId]);
+    }
+
+    static sumOfApprovedCredits(empId , month, year){
+        if(month && year){
+            return pool.query(`SELECT SUM(amount) FROM credits WHERE is_settled = TRUE AND status = 'Approved' AND employee = $1 AND DATE_PART('month', approve_date) = $2 AND DATE_PART('year',approve_date) = $3`,[empId, month, year]);
+        }
+        return pool.query(`SELECT SUM(amount) FROM credits WHERE is_settled = TRUE AND status = 'Approved' AND employee = $1`,[empId]);
     }
 }

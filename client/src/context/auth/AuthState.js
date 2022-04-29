@@ -1,5 +1,5 @@
 import authContext from "./authContext";
-import { useState, useEffect } from "react";
+import { useState, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 const AuthState = (props) => {
@@ -10,12 +10,10 @@ const AuthState = (props) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const [organizationId, setOrganizationId] = useState(
-    localStorage.getItem("organizationId")
-      ? localStorage.getItem("organizationId")
-      : null
+    localStorage.getItem("organizationId") || null
   );
 
-  const [id, setId] = useState(null);
+  const [id, setId] = useState( localStorage.getItem("id") || null );
 
   const navigate = useNavigate();
 
@@ -32,13 +30,14 @@ const AuthState = (props) => {
         }
       );
       const result = await res.json();
+      console.log(result)
       setIsAdmin(result.isAdmin);
     } catch (err) {
       console.log(err);
     }
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isLoggedIn) getAdminStatus();
   }, [isLoggedIn]);
 

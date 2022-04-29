@@ -4,10 +4,12 @@ const activityControllers = require('../controllers/activity');
 
 const router = express.Router();
 
-router.get('/:empId' , activityControllers.getActivities);
+const authUser = require('../middlewares/auth-user');
 
-router.post('/' , activityControllers.postActivity);
+router.get('/:empId' ,authUser, activityControllers.getActivities);
 
-router.get('/clear/:empId', activityControllers.clearActivities);
+router.post('/' , authUser, activityControllers.postActivity);
+
+router.get('/clear/:empId',authUser, activityControllers.clearActivities);
 
 module.exports = router;

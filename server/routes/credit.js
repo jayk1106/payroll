@@ -4,17 +4,19 @@ const creditControllers = require('../controllers/credit');
 
 const router = express.Router();
 
-router.get('/all/:orgId' , creditControllers.getAllOrganizationsCredits);
+const authUser = require('../middlewares/auth-user');
+const getPermissions = require('../middlewares/get-permissions');
+const isAdmin = require('../middlewares/isAdmin');
 
-router.get('/:empId' , creditControllers.getCredits);
+router.get('/all/:orgId', authUser, getPermissions, isAdmin , creditControllers.getAllOrganizationsCredits);
 
-router.put('/settle/:creditId', creditControllers.putSettleCredit);
+router.get('/:empId', authUser , creditControllers.getCredits);
+
+router.put('/settle/:creditId', authUser, getPermissions, isAdmin, creditControllers.putSettleCredit);
  
-// router.put('/reject/:creditId', creditControllers);
+router.post('/' , authUser, creditControllers.postCredit);
 
-router.post('/' , creditControllers.postCredit);
-
-router.put('/' , creditControllers.putCredits);
+router.put('/' , authUser, creditControllers.putCredits);
 
 router.delete('/:id' , creditControllers.deleteCredit);
 
