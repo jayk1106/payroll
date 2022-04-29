@@ -16,8 +16,8 @@ module.exports = class Branch{
         )
     }
 
-    static fetchAll(){
-        return pool.query(`SELECT * FROM branches`);
+    static fetchAll(orgId){
+        return pool.query(`SELECT * FROM branches WHERE organization = $1`,[orgId]);
     }
 
     static update(br){

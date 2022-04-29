@@ -18,23 +18,30 @@ module.exports = class Employee{
     }
 
     save(){
-        return pool.query(`INSERT INTO employees ( id, e_fname, e_lname, e_email, e_password, e_gender, e_age, join_date, payout_time, e_salary_per_year, department, branch, permissions, organization ) 
-                VALUES ( uuid_generate_v4() , $1 , $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11, $12 , $13) RETURNING *`,
-                [this.e_fname , this.e_lname, this.e_email, this.e_password , this.e_gender, this.e_age, this.join_date, this.payout_time, this.e_salary_per_year, this.department, this.branch, this.permissions, this.organization]
+        return pool.query(`INSERT INTO employees ( e_fname, e_lname, e_email, e_password, e_gender, e_age, join_date, e_salary_per_year, department, branch, organization ) 
+                VALUES ( $1 , $2, $3, $4, $5, $6, $7, $8, $9 , $10, $11) RETURNING *`,
+                [this.e_fname , this.e_lname, this.e_email, this.e_password , this.e_gender, this.e_age, this.join_date, this.e_salary_per_year, this.department, this.branch, this.organization]
         )
     }
 
-    static fetchAll(){
-        return pool.query(`SELECT * FROM employees`);
+    static fetchAllByOrg(orgId){
+        return pool.query(`SELECT employees.id ,e_fname, e_lname, e_email, br_name, dp_name FROM employees JOIN branches ON employees.branch = branches.id JOIN departments ON employees.department = departments.id WHERE employees.organization = $1 ORDER BY created_at DESC`,[orgId]);
     }
 
-    static find(columnName , value){
+    static find(columnName , value, organization){
+        if(organization){
+            return pool.query(`SELECT * FROM employees WHERE ${columnName} = $1 AND organization = $2` , [value,organization]);
+        }
         return pool.query(`SELECT * FROM employees WHERE ${columnName} = $1` , [value]);
     }
 
+    static findInOrganization(columnName , value, organization){
+        return pool.query(`SELECT * FROM employees WHERE ${columnName} = $1 AND organization = $2` , [value, organization]);
+    }
+
     static update(emp){
-        return pool.query(`UPDATE employees SET e_fname = $1, e_lname = $2, e_email = $3, e_gender = $4, e_age = $5, join_date = $6, payout_time = $7, e_salary_per_year = $8, department = $9, branch = $10, permissions = $11 WHERE id = $12 RETURNING *`,
-        [emp.e_fname , emp.e_lname , emp.e_email , emp.e_gender , emp.e_age, emp.join_date , emp.payout_time, emp.e_salary_per_year, emp.department, emp.branch , emp.permissions , emp.id]
+        return pool.query(`UPDATE employees SET e_fname = $1, e_lname = $2, e_email = $3, e_gender = $4, e_age = $5, join_date = $6, e_salary_per_year = $7, department = $8, branch = $9 WHERE id = $10 RETURNING *`,
+        [emp.e_fname , emp.e_lname , emp.e_email , emp.e_gender , emp.e_age, emp.join_date , emp.e_salary_per_year, emp.department, emp.branch , emp.id]
         );
     }
 
@@ -42,4 +49,19 @@ module.exports = class Employee{
         return pool.query(`DELETE FROM employees WHERE id = $1` , [id]);
     }
 
+    static numberOfEmployees(orgId){
+        return pool.query(`SELECT COUNT(id) from employees WHERE organization = $1`,[orgId]);
+    }
+
+    static latestEmployees(num, orgId){
+        return pool.query(`SELECT * from employees WHERE organization = $1 ORDER BY created_at DESC LIMIT $2`,[orgId, num]);
+    }
+
+    static getEmployeeProfile(id){
+        return pool.query(`SELECT employees.id, e_fname, e_lname, e_email, e_gender, e_age, employees.join_date, employees.end_date, department,  branch, employees.organization, e_salary_per_year, employees.permissions, payout_time, br_name, dp_name FROM employees JOIN branches ON employees.branch = branches.id JOIN departments ON employees.department = departments.id WHERE employees.id = $1`,[id]);
+    }
+
+    static makeAdmin(id){
+        return pool.query(`UPDATE employees SET permissions = 'c40441eb-06ae-4b67-8cd4-fc15ced1a94e' WHERE id = $1`, [id]);
+    }
 }

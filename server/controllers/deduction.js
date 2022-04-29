@@ -20,9 +20,10 @@ module.exports.postDeduction = async (req,res,next) => {
     const description = req.body.description;
     const type = req.body.type;
     const employee = req.body.employee;
+    const amount = req.body.amount;
 
     try {
-        const deduction = new Deduction({title , description, type, employee});
+        const deduction = new Deduction({title , description, type, employee, amount});
         const result = await deduction.save();
         res.status(201).json({
             message : "Deduction added",

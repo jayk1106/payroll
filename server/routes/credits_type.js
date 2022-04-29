@@ -8,7 +8,7 @@ const isAdmin = require('../middlewares/isAdmin');
 
 const router = express.Router();
 
-router.get('/:orgId' , authUser, getPermissions, isAdmin, creditsTypesControllers.getCreditsTypes);
+router.get('/:orgId' , authUser, creditsTypesControllers.getCreditsTypes);
 
 router.post('/' , authUser, getPermissions, isAdmin, creditsTypesControllers.postCreditsType);
 

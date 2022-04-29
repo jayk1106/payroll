@@ -13,7 +13,7 @@ module.exports = class Activity{
     }
 
     static fetchAll(employee){
-        return pool.query(`SELECT * FROM activities WHERE employee = $1`,[employee]);
+        return pool.query(`SELECT * FROM activities WHERE employee = $1 ORDER BY date DESC`,[employee]);
     }
 
     static clear(employee){

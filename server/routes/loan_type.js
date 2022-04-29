@@ -8,7 +8,7 @@ const isAdmin = require('../middlewares/isAdmin');
 
 const router = express.Router();
 
-router.get('/:orgId' , authUser, getPermissions, isAdmin, loanTypesControllers.getLoanTypes);
+router.get('/:orgId' , authUser, loanTypesControllers.getLoanTypes);
 
 router.post('/' , authUser, getPermissions, isAdmin, loanTypesControllers.postLoanType);
 

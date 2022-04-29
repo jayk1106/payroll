@@ -1,16 +1,19 @@
 const express = require('express');
 
 const orgControllers = require('../controllers/organization');
-const authUser = require('../middlewares/auth-user');
 
 const router = express.Router();
 
-router.get('/' , orgControllers.getOrganization);
+const authUser = require('../middlewares/auth-user');
+const getPermissions = require('../middlewares/get-permissions');
+const isAdmin = require('../middlewares/isAdmin');
 
-router.post('/' , authUser , orgControllers.postOrganization);
+router.get('/:orgId' , orgControllers.getOrganization);
 
-router.put('/' , authUser , orgControllers.putOrganization);
+router.post('/' , authUser, getPermissions, isAdmin , orgControllers.postOrganization);
 
-router.delete('/' , authUser , orgControllers.deleteOrganization);
+router.put('/' , authUser, getPermissions, isAdmin , orgControllers.putOrganization);
+
+router.delete('/' , authUser, getPermissions, isAdmin , orgControllers.deleteOrganization);
 
 module.exports = router;

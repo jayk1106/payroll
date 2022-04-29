@@ -14,6 +14,35 @@ module.exports.getLeaves = async (req,res,next) => {
     }
 }
 
+module.exports.putApproveLeave = async (req,res,next) => {
+    const leaveId = req.params.leaveId;
+    const isReject = req.query.reject;
+   try {
+        const result = await Leave.settleLeave(leaveId, isReject === 'true');
+        res.status(200).json({
+            message : `This Leave was ${isReject === 'true' ? 'rejected' : 'approved'}`
+        })
+    } catch (err) {
+        if(err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
+module.exports.getAllLoansForOrganization = async (req,res,next) => {
+
+    const orgId = req.params.orgId;
+    try {
+        const result = await Leave.fetchAllForOrganization(orgId);
+        res.status(200).json({
+            message : "All leaves for organization",
+            leaves : result.rows
+        })
+    } catch (err) {
+        if(err.statusCode) err.statusCode = 500;
+        next(err);
+    }
+}
+
 module.exports.postLeave = async (req,res,next) => {
     
     const title = req.body.title;

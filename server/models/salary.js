@@ -27,11 +27,43 @@ module.exports = class Salary{
         );
     }
 
+    static fetchById(id){
+        return pool.query(`SELECT * FROM salary WHERE id = $1`,[id]);
+    }
+
     static fetchAll(employee){
-        return pool.query(`SELECT * FROM salary WHERE employee = $1`,[employee]);
+        return pool.query(`SELECT salary.id, salary.amount, salary.start_date, salary.end_date, salary.duration_in_days, salary.tax_amount, salary.total_credits, salary.total_deductions, salary.total_loans, salary.duration_in_months, salary.status, salary.approve_date, employees.e_fname, employees.e_lname, employees.e_email, branches.br_city FROM salary JOIN employees ON salary.employee = employees.id JOIN branches ON employees.branch = branches.id WHERE employees.id = $1`,[employee]);
+    }
+ 
+    static fetchAllForOrganization(orgId , month , year){
+        if(month && year){
+            const startDate = `${year}-${month}-01`;
+            let endDate = `${year}-${month+1}-01`;
+            if(month == 12){
+                endDate = `${year+1}-01-01`;
+            }
+            // console.log(startDate,endDate);
+            return pool.query(`SELECT salary.id, salary.amount, salary.start_date, salary.end_date, salary.duration_in_days, salary.tax_amount, salary.total_credits, salary.total_deductions, salary.total_loans, salary.duration_in_months, salary.status, salary.approve_date, employees.e_fname, employees.e_lname, employees.e_email, branches.br_city FROM salary JOIN employees ON salary.employee = employees.id JOIN branches ON employees.branch = branches.id WHERE employees.organization = $1 AND salary.end_date BETWEEN $2 AND $3`,[orgId,startDate,endDate]);
+        }
+        return pool.query(`SELECT salary.id, salary.amount, salary.start_date, salary.end_date, salary.duration_in_days, salary.tax_amount, salary.total_credits, salary.total_deductions, salary.total_loans, salary.duration_in_months, salary.status, salary.approve_date, employees.e_fname, employees.e_lname, employees.e_email, branches.br_city FROM salary JOIN employees ON salary.employee = employees.id JOIN branches ON employees.branch = branches.id WHERE employees.organization = $1`,[orgId]);
     }
 
     static deleteById(id){
         return pool.query(`DELETE FROM salary WHERE id = $1`, [id]);
+    }
+
+    static spendAmount(orgId){
+        return pool.query(`SELECT SUM(salary.amount) from salary JOIN employees ON salary.employee = employees.id WHERE status = 'Approved' AND employees.organization = $1`,[orgId]);
+    }
+    static pendingAmount(orgId) {
+        return pool.query(`SELECT SUM(salary.amount) from salary JOIN employees ON salary.employee = employees.id WHERE status = 'Pending' AND employees.organization = $1`,[orgId]);
+    }
+
+    static getMonthlySalary(empId){
+        return pool.query(`SELECT e_salary_per_year FROM employees WHERE id = $1`,[empId]);
+    }
+
+    static approveSalary(id){
+        return pool.query(`UPDATE salary SET status = 'Approved', approve_date = CURRENT_TIMESTAMP WHERE id = $1`,[id]);
     }
 }

@@ -4,12 +4,20 @@ const loanControllers = require('../controllers/loan');
 
 const router = express.Router();
 
-router.get('/:empId' , loanControllers.getLoan);
+const authUser = require('../middlewares/auth-user');
+const getPermissions = require('../middlewares/get-permissions');
+const isAdmin = require('../middlewares/isAdmin');
 
-router.post('/' , loanControllers.postLoan);
+router.get('/all/:orgId' , authUser, getPermissions, isAdmin , loanControllers.getAllLoansForOrganization);
 
-router.put('/' , loanControllers.putLoan);
+router.put('/settle/:loanId' , authUser,loanControllers.putApproveLoan);
 
-router.delete('/:id' , loanControllers.deleteLoan);
+router.get('/:empId', authUser , loanControllers.getLoan);
+
+router.post('/', authUser , loanControllers.postLoan);
+
+router.put('/' ,authUser , loanControllers.putLoan);
+
+router.delete('/:id', authUser, getPermissions, isAdmin , loanControllers.deleteLoan);
 
 module.exports = router;

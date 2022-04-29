@@ -1,0 +1,37 @@
+.heading {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.example {
+  margin: 20px 0;
+  margin-bottom: 20px;
+  padding: 30px 50px;
+  text-align: center;
+  background-color: #f7fafc;
+  border-radius: 4px;
+}
+
+.errorContainer {
+  width: 60%;
+  height: auto;
+  margin: auto;
+  margin-top: 2%;
+  padding: auto;
+}
+
+.table {
+  width: 80%;
+  margin-top: 20px;
+}
+
+.avatar {
+  display: flex;
+  flex-direction: row;
+  margin-top: 10px;
+}
+
+.avatar__details {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
