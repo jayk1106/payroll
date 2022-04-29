@@ -1,31 +1,44 @@
 // import { Layout, Menu, Statistic } from 'antd';
 // import { WalletOutlined, UserOutlined, TeamOutlined, LoginOutlined , DashboardOutlined, LineChartOutlined, StockOutlined, SwapOutlined } from '@ant-design/icons';
-import "./App.css";
-import "antd/dist/antd.css";
+import { Spin } from 'antd';
+
+import './App.css';
+import 'antd/dist/antd.css';
 // import ListView from './components/UI/List/ListView';
 // import Icon from './components/UI/Icon/Icon';
-import Employees from "./components/Employees/Employees";
-import Login from "./components/Login/Login";
-import Signup from "./components/Signup/Signup";
-import Dashboard from "./components/Dashboard/Dashboard";
-import CreateOrganization from "./components/Organization/CreateOrganization";
-import UserProfile from "./components/Profile/UserProfile";
-import Requests from "./components/Request/Requests";
-import Profile from "./components/Profile/Profile";
-import Salary from "./components/Salary/Salary";
-import SalaryDetails from "./components/Salary/SalaryDetails";
-import PageNotFound from "./components/Error/PageNotFound";
+import Organization from './components/Organization/Organization';
+import Employees from './components/Employees/Employees';
+import Login from './components/Login/Login';
+import Signup from './components/Signup/Signup';
+import Dashboard from './components/Dashboard/Dashboard';
+import CreateOrganization from './components/Organization/CreateOrganization';
+import UserProfile from './components/Profile/UserProfile';
+import Requests from './components/Request/Requests';
+import AddRequest from './components/Request/AddRequest';
+import Profile from './components/Profile/Profile';
+import Salary from './components/Salary/Salary';
+import Activity from './components/Activity/Activity';
+import Deduction from './components/Deduction/Deduction';
+import DeductionDetail from './components/Deduction/DeductionDetail';
+import PageNotFound from './components/Error/PageNotFound';
 // const { Content, Footer, Sider } = Layout;
-import { Routes, Route, Navigate } from "react-router-dom";
-import { useContext } from "react";
+import { Routes, Route, Navigate } from 'react-router-dom';
+import { useContext } from 'react';
 
-import authContext from "./context/auth/authContext";
-import MainLayout from "./components/UI/MainLayout/MainLayout";
+import authContext from './context/auth/authContext';
+import MainLayout from './components/UI/MainLayout/MainLayout';
 
 function App() {
-  const { isLoggedIn, isAdmin } = useContext(authContext);
+  const { isLoggedIn, isAdmin, isUser } = useContext(authContext);
   const URL = process.env.REACT_APP_API_URL;
 
+  if ((isAdmin === null || isUser === null) && isLoggedIn) {
+    return (
+      <>
+        <Spin />
+      </>
+    );
+  }
   return (
     <>
       <Routes>
@@ -45,11 +58,23 @@ function App() {
           path="/"
           element={
             isLoggedIn ? (
-              isAdmin ? (
+              isAdmin || isUser ? (
                 <Navigate to="/dashboard" replace />
               ) : (
                 <Navigate to="/activity" replace />
               )
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="organization"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <Organization api_url={URL} />
+              </MainLayout>
             ) : (
               <Navigate to="/login" replace />
             )
@@ -78,13 +103,24 @@ function App() {
             )
           }
         />
-
         <Route
-          path="profile"
+          path="employees/:employeeId"
           element={
             isLoggedIn ? (
               <MainLayout>
-                <Profile api_url={URL} />
+                <UserProfile api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+        <Route
+          path="employees/:employeeId/deduction"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <Deduction api_url={URL} />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />
@@ -93,11 +129,11 @@ function App() {
         />
 
         <Route
-          path="employees/:employeeId"
+          path="profile"
           element={
             isLoggedIn ? (
               <MainLayout>
-                <UserProfile api_url={URL} />
+                <Profile api_url={URL} />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />
@@ -138,6 +174,19 @@ function App() {
         />
 
         <Route
+          path="requests/add-request"
+          element={
+            isLoggedIn ? (
+              <MainLayout>
+                <AddRequest api_url={URL} />
+              </MainLayout>
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
           path="salary"
           element={
             isLoggedIn ? (
@@ -151,11 +200,28 @@ function App() {
         />
 
         <Route
-          path="salary/:salaryId"
+          path="activity"
+          element={
+            isLoggedIn ? (
+              !isAdmin && !isUser ? (
+                <MainLayout>
+                  <Activity api_url={URL} />
+                </MainLayout>
+              ) : (
+                <Navigate to="/dashboard" replace />
+              )
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          }
+        />
+
+        <Route
+          path="deductions"
           element={
             isLoggedIn ? (
               <MainLayout>
-                <SalaryDetails api_url={URL} />
+                <DeductionDetail api_url={URL} />
               </MainLayout>
             ) : (
               <Navigate to="/login" replace />

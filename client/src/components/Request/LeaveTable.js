@@ -19,7 +19,14 @@ export default function LeaveTable(props) {
   const URL = props.api_url;
   const key = "leave";
   const { isLoadding, error, sendRequest } = useHttp();
-  const { organizationId } = useContext(authContext);
+  const { organizationId, id, isAdmin } = useContext(authContext);
+
+  let url = "";
+  if (isAdmin) {
+    url = `${URL}/${key}/all/${organizationId}`;
+  } else {
+    url = `${URL}/${key}/${id}`;
+  }
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [leaveData, setLeaveData] = useState([]);
@@ -28,7 +35,7 @@ export default function LeaveTable(props) {
   const getRequestData = async () => {
     try {
       const res = await sendRequest({
-        url: `${URL}/${key}/all/${organizationId}`,
+        url: url,
         options: {
           headers: {
             Authorization: localStorage.getItem("token"),
@@ -42,11 +49,11 @@ export default function LeaveTable(props) {
 
       if (res) {
         setLeaveData(
-          res.loans.map((loan) => ({
-            ...loan,
+          res.leaves.map((leave) => ({
+            ...leave,
             avatar: {
-              name: loan.e_fname + " " + loan.e_lname,
-              email: loan.e_email,
+              name: leave.e_fname + " " + leave.e_lname,
+              email: leave.e_email,
             },
           }))
         );
@@ -197,18 +204,20 @@ export default function LeaveTable(props) {
             <p>Title : {modalData[0]?.title}</p>
             <p>Description : {modalData[0]?.description}</p>
             <p>Requested By : {modalData[0]?.avatar.name}</p>
-            <Space direction="horizontal">
-              <Button type="primary" onClick={settleRequest.bind(null, true)}>
-                Accept
-              </Button>
-              <Button
-                type="primary"
-                onClick={settleRequest.bind(null, false)}
-                danger
-              >
-                Reject
-              </Button>
-            </Space>
+            {!modalData[0].is_settled && isAdmin && (
+              <Space direction="horizontal">
+                <Button type="primary" onClick={settleRequest.bind(null, true)}>
+                  Accept
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={settleRequest.bind(null, false)}
+                  danger
+                >
+                  Reject
+                </Button>
+              </Space>
+            )}
           </>
         )}
       </Modal>
