@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Statistic, Spin, Alert } from "antd";
+import React, { useState, useEffect, useContext } from 'react';
+import { Statistic, Spin, Alert } from 'antd';
 
-import useHttp from "../../hooks/useHttp";
-import authContext from "../../context/auth/authContext";
-import ListView from "../UI/List/ListView";
-import "./Dashboard.css";
+import useHttp from '../../hooks/useHttp';
+import authContext from '../../context/auth/authContext';
+import ListView from '../UI/List/ListView';
+import './Dashboard.css';
 
 const Dashboard = (props) => {
   const URL = props.api_url;
@@ -19,7 +19,7 @@ const Dashboard = (props) => {
       url: `${URL}/general/dashboard/${organizationId}`,
       options: {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          Authorization: localStorage.getItem('token'),
         },
       },
     });
@@ -91,9 +91,9 @@ const Dashboard = (props) => {
               <div className="list">
                 <ListView latestEmployees={employees} />
               </div>
-              <div className="list">
+              {/* <div className="list">
                 <ListView />
-              </div>
+              </div> */}
             </div>
           </div>
         </>

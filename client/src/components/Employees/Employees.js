@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
-import { Avatar, Table, Button, Modal, Spin, Alert } from "antd";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useContext } from 'react';
+import { Avatar, Table, Button, Modal, Spin, Alert } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
-import useHttp from "../../hooks/useHttp";
-import authContext from "../../context/auth/authContext";
-import AddEmployee from "./AddEmployee";
-import "./Employees.css";
+import useHttp from '../../hooks/useHttp';
+import authContext from '../../context/auth/authContext';
+import AddEmployee from './AddEmployee';
+import './Employees.css';
 
 const Employees = (props) => {
   const URL = props.api_url;
@@ -22,7 +22,7 @@ const Employees = (props) => {
         url: `${URL}/employee/all/${organizationId}`,
         options: {
           headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: localStorage.getItem('token'),
           },
         },
       });
@@ -36,7 +36,7 @@ const Employees = (props) => {
           res.employees.map((e) => ({
             ...e,
             avatar: {
-              name: e.e_fname + " " + e.e_lname,
+              name: e.e_fname + ' ' + e.e_lname,
               email: e.e_email,
             },
             employeeId: e.id,
@@ -50,13 +50,13 @@ const Employees = (props) => {
 
   useEffect(() => {
     getEmployees();
-  }, [isModalVisible]);
+  }, []);
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "avatar",
-      key: "avatar",
+      title: 'Name',
+      dataIndex: 'avatar',
+      key: 'avatar',
       render: (value) => {
         return (
           <div className="avatar">
@@ -72,19 +72,19 @@ const Employees = (props) => {
       },
     },
     {
-      title: "Branch",
-      dataIndex: "br_name",
-      key: "branch",
+      title: 'Branch',
+      dataIndex: 'br_name',
+      key: 'branch',
     },
     {
-      title: "Department",
-      dataIndex: "dp_name",
-      key: "department",
+      title: 'Department',
+      dataIndex: 'dp_name',
+      key: 'department',
     },
     {
-      title: "Details",
-      dataIndex: "employeeId",
-      key: "employeeId",
+      title: 'Details',
+      dataIndex: 'employeeId',
+      key: 'employeeId',
       render: (value) => {
         const getEmployeeById = () => {
           navigate(`/employees/${value}`);
@@ -125,7 +125,12 @@ const Employees = (props) => {
         onCancel={handleCancel}
         style={{ top: 20 }}
       >
-        <AddEmployee data={null} closeModal={handleCancel} url={URL} />
+        <AddEmployee
+          data={null}
+          closeModal={handleCancel}
+          reloadData={getEmployees}
+          url={URL}
+        />
       </Modal>
       {error && (
         <>

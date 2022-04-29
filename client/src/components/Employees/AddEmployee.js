@@ -1,5 +1,5 @@
-import React, { useState, useContext, useEffect } from "react";
-import moment from "moment";
+import React, { useState, useContext, useEffect } from 'react';
+import moment from 'moment';
 import {
   Form,
   Input,
@@ -10,16 +10,16 @@ import {
   InputNumber,
   Alert,
   message,
-} from "antd";
+} from 'antd';
 
-import useHttp from "../../hooks/useHttp";
-import authContext from "../../context/auth/authContext";
+import useHttp from '../../hooks/useHttp';
+import authContext from '../../context/auth/authContext';
 
 const AddEmployee = (props) => {
   const URL = props.url;
   const { sendRequest, error, isLoadding } = useHttp();
   const { organizationId } = useContext(authContext);
-  const [componentSize, setComponentSize] = useState("default");
+  const [componentSize, setComponentSize] = useState('default');
 
   const [value, setValue] = useState(1);
   const [branches, setBranches] = useState([]);
@@ -29,14 +29,14 @@ const AddEmployee = (props) => {
 
   const data = props.data;
 
-  const dateFormat = "YYYY/MM/DD";
+  const dateFormat = 'YYYY/MM/DD';
 
   const getBranchAndDepartment = async () => {
     const res = await sendRequest({
       url: `${URL}/general/form-select-values/${organizationId}`,
       options: {
         headers: {
-          Authorization: localStorage.getItem("token"),
+          Authorization: localStorage.getItem('token'),
         },
       },
     });
@@ -70,16 +70,16 @@ const AddEmployee = (props) => {
       ...values,
       join_date:
         values.join_date._d.getFullYear() +
-        "-" +
+        '-' +
         values.join_date._d.getMonth() +
-        "-" +
+        '-' +
         values.join_date._d.getDate(),
     };
     console.log(employeeData);
-    let method = "POST";
+    let method = 'POST';
 
     if (isEdit) {
-      method = "PUT";
+      method = 'PUT';
     }
 
     const res = await sendRequest({
@@ -87,8 +87,8 @@ const AddEmployee = (props) => {
       options: {
         method: method,
         headers: {
-          Authorization: localStorage.getItem("token"),
-          "Content-Type": "application/json",
+          Authorization: localStorage.getItem('token'),
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(employeeData),
       },
@@ -106,8 +106,8 @@ const AddEmployee = (props) => {
     }
 
     if (res) {
-      console.log(res);
       props.closeModal();
+      props.reloadData();
       getMessage(res.message);
     }
   };
@@ -173,8 +173,8 @@ const AddEmployee = (props) => {
 
         <Form.Item label="Gender" name="e_gender" initialValue={data?.e_gender}>
           <Radio.Group onChange={onChange} value={value}>
-            <Radio value={"Male"}>Male</Radio>
-            <Radio value={"Female"}>Female</Radio>
+            <Radio value={'Male'}>Male</Radio>
+            <Radio value={'Female'}>Female</Radio>
           </Radio.Group>
         </Form.Item>
 

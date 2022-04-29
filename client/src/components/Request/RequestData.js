@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Avatar,
   Table,
@@ -9,30 +9,37 @@ import {
   Space,
   Alert,
   message,
-} from "antd";
+} from 'antd';
 
-import useHttp from "../../hooks/useHttp";
-import authContext from "../../context/auth/authContext";
-import style from "./Requests.module.css";
+import useHttp from '../../hooks/useHttp';
+import authContext from '../../context/auth/authContext';
+import style from './Requests.module.css';
 
 export default function RequestData(props) {
   const URL = props.api_url;
   const key = props.requestType;
+
   const { isLoadding, error, sendRequest } = useHttp();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [modalData, setModalData] = useState();
 
   const [requestData, setRequestData] = useState([]);
-  const { organizationId } = useContext(authContext);
+  const { organizationId, id, isAdmin } = useContext(authContext);
+
+  let url = `${URL}/${key}/all/${organizationId}`;
+
+  if (!isAdmin) {
+    url = `${URL}/${key}/${id}`;
+  }
 
   const getRequestData = async () => {
     try {
       const res = await sendRequest({
-        url: `${URL}/${key}/all/${organizationId}`,
+        url: url,
         options: {
           headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: localStorage.getItem('token'),
           },
         },
       });
@@ -41,24 +48,24 @@ export default function RequestData(props) {
         throw new Error(error);
       }
 
-      if (key === "credit" && res && res.credits) {
+      if (key === 'credit' && res && res.credits) {
         setRequestData(
           res.credits.map((credit) => ({
             ...credit,
             avatar: {
-              name: credit.e_fname + " " + credit.e_lname,
+              name: credit.e_fname + ' ' + credit.e_lname,
               email: credit.e_email,
             },
           }))
         );
       }
 
-      if (key === "loan" && res && res.loans) {
+      if (key === 'loan' && res && res.loans) {
         setRequestData(
           res.loans.map((loan) => ({
             ...loan,
             avatar: {
-              name: loan.e_fname + " " + loan.e_lname,
+              name: loan.e_fname + ' ' + loan.e_lname,
               email: loan.e_email,
             },
           }))
@@ -71,7 +78,7 @@ export default function RequestData(props) {
 
   useEffect(() => {
     getRequestData();
-  }, [isModalVisible]);
+  }, []);
 
   const showModal = (id) => {
     setIsModalVisible(true);
@@ -102,9 +109,9 @@ export default function RequestData(props) {
       const res = await sendRequest({
         url: url,
         options: {
-          method: "PUT",
+          method: 'PUT',
           headers: {
-            Authorization: localStorage.getItem("token"),
+            Authorization: localStorage.getItem('token'),
           },
         },
       });
@@ -118,6 +125,7 @@ export default function RequestData(props) {
       if (res) {
         console.log(res);
         handleOk();
+        getRequestData();
         getMessage(res.message);
       }
     } catch (error) {
@@ -127,9 +135,9 @@ export default function RequestData(props) {
 
   const columns = [
     {
-      title: "Name",
-      dataIndex: "avatar",
-      key: "name",
+      title: 'Name',
+      dataIndex: 'avatar',
+      key: 'name',
       onClick: showModal,
       render: (value) => {
         return (
@@ -144,35 +152,35 @@ export default function RequestData(props) {
       },
     },
     {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
+      title: 'Title',
+      dataIndex: 'title',
+      key: 'title',
     },
     {
-      title: "Amount",
-      dataIndex: "amount",
-      key: "amount",
+      title: 'Amount',
+      dataIndex: 'amount',
+      key: 'amount',
     },
     {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
       render: (value) => {
         let color;
-        if (value === "Pending") {
-          color = "warning";
-        } else if (value === "Approved") {
-          color = "success";
-        } else if (value === "Rejected") {
-          color = "error";
+        if (value === 'Pending') {
+          color = 'warning';
+        } else if (value === 'Approved') {
+          color = 'success';
+        } else if (value === 'Rejected') {
+          color = 'error';
         }
         return <Tag color={color}>{value}</Tag>;
       },
     },
     {
-      title: "Details",
-      dataIndex: "id",
-      key: "id",
+      title: 'Details',
+      dataIndex: 'id',
+      key: 'id',
       render: (value) => {
         return (
           <Button type="primary" onClick={showModal.bind(null, value)}>
@@ -226,7 +234,7 @@ export default function RequestData(props) {
             <p>Description : {modalData[0].description}</p>
             <p>Requested By : {modalData[0].avatar.name}</p>
             <p>Amount : {modalData[0].amount}</p>
-            {!modalData[0].is_settled && (
+            {!modalData[0].is_settled && isAdmin && (
               <Space direction="horizontal">
                 <Button type="primary" onClick={settleRequest.bind(null, true)}>
                   Accept

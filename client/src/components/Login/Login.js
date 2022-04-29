@@ -1,10 +1,10 @@
-import { useContext } from "react";
-import { Form, Input, Button, Alert } from "antd";
-import authContext from "../../context/auth/authContext";
-import useHttp from "../../hooks/useHttp";
-import { useParams } from "react-router-dom";
+import { useContext } from 'react';
+import { Form, Input, Button, Alert } from 'antd';
+import authContext from '../../context/auth/authContext';
+import useHttp from '../../hooks/useHttp';
+import { useParams, Link } from 'react-router-dom';
 
-import style from "./Login.module.css";
+import style from './Login.module.css';
 
 const Login = (props) => {
   const URL = props.api_url;
@@ -13,7 +13,7 @@ const Login = (props) => {
 
   const { orgId } = useParams();
 
-  let errorContent = "";
+  let errorContent = '';
 
   if (error) {
     errorContent = <Alert message={error} type="error" showIcon closable />;
@@ -23,9 +23,9 @@ const Login = (props) => {
     let requestData = {
       url: `${URL}/user/login`,
       options: {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(values),
       },
@@ -35,9 +35,9 @@ const Login = (props) => {
       requestData = {
         url: `${URL}/employee/login`,
         options: {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(values),
         },
@@ -48,10 +48,13 @@ const Login = (props) => {
     if (data && data?.user?.token) {
       login(data.user.token, data.user.organizationId, data.user.id);
     }
-    if(data && data?.employee?.token){
-      console.log(data.employee.token, data.employee.organization);
-      login(data.employee.token , data.employee.organization, data.employee.id, '/activity');
-
+    if (data && data?.employee?.token) {
+      login(
+        data.employee.token,
+        data.employee.organization,
+        data.employee.id,
+        '/activity'
+      );
     }
     if (data && data?.error) {
       errorContent = (
@@ -82,14 +85,14 @@ const Login = (props) => {
           )}
           <Form.Item
             label="Email"
-            name={props.employeeLogin ? "e_email" : "email"}
+            name={props.employeeLogin ? 'e_email' : 'email'}
             required
           >
             <Input className={style.input} placeholder="Enter your Email" />
           </Form.Item>
           <Form.Item
             label="Password"
-            name={props.employeeLogin ? "e_password" : "password"}
+            name={props.employeeLogin ? 'e_password' : 'password'}
             required
           >
             <Input.Password
@@ -108,7 +111,11 @@ const Login = (props) => {
             </Button>
           </Form.Item>
         </Form>
-        {!props.employeeLogin && <p>Don't have an account? Sign up</p>}
+        {!props.employeeLogin && (
+          <p>
+            Don't have an account? <Link to="/signup"> Sign up</Link>
+          </p>
+        )}
       </div>
     </div>
   );
